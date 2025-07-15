@@ -95,13 +95,13 @@ func ReadSettingsJSON() map[string]any {
 
 	var settings map[string]any
 	if err = json.Unmarshal(data, &settings); err != nil {
-		log.Fatalf("Error during decoding %s: %v\n", CleanedSettingsPath, err)
+		log.Printf("Error during decoding %s: %v\n", CleanedSettingsPath, err)
+		return defaultSettings
 	}
 	return settings
 }
 
-
-func WriteRefreshNewSettings(newSettings map[string]any) {
+func WriteNewSettings(newSettings map[string]any) {
 	data, err := json.MarshalIndent(newSettings, "", "  ")
 	if err != nil {
 		log.Println("Unable to encode new setings into JSON format")
@@ -111,7 +111,17 @@ func WriteRefreshNewSettings(newSettings map[string]any) {
 	if err := os.WriteFile(CleanedSettingsPath, data, 0644); err != nil {
 		log.Fatalf("Error writing settings to %s: %v", CleanedSettingsPath, err)
 	}
-	AllSettings = ReadSettingsJSON() // Refresh settings
+	RefreshSettings()
 }
 
+func RefreshSettings() {
+	CurrentSettings = ReadSettingsJSON()
 
+	log.Println()
+	log.Println("Current Settings:")
+	for k, v := range CurrentSettings {
+		log.Printf("%s = %v\n", k, v)
+	}
+	log.Println()
+
+}

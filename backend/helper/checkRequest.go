@@ -2,25 +2,25 @@ package helper
 
 import (
 	"net"
-	"strings"
 	"path/filepath"
+	"strings"
 )
 
-func FromInvalidIPs(addr string, important bool) bool {
+func FromInvalidIPs(addr string, important bool) bool { // 	
 	host, _, err := net.SplitHostPort(addr)
 	if err != nil {
 		return true
 	}
-
+	
 	if net.ParseIP(host).IsLoopback() || host == GetMyIP().String() {
 		return false
 	}
-
+	
 	if important { // Stuff like settings should be only editable by the host machine or webui
 		return true
 	}
 	
-	return !AllowOtherIPs
+	return !CurrentSettings["AllowOtherIPs"].(bool)
 }
 
 

@@ -14,16 +14,22 @@ const (
 
 	SettingsCommand = "/settings"
 	WsNotifyCommand = "/ws"
+
+	FSLabel = "Resource Folder"
+	SettingsLabel = "Settings"
+
 )
 
 var (
-	AllowOtherIPs bool  = false
+	defaultSettings = map[string]any{
+		"AllowOtherIPs": false,
+	}
+	CurrentSettings = ReadSettingsJSON()
+
 	MaxUploadSize int64 = TranslateSize("5GB")
 
 	CleanedResourcePath string = CleanPath(ResourcePath)
 	CleanedSettingsPath string = CleanPath(SettingsJSON)
-
-	AllSettings map[string]any = ReadSettingsJSON()
 )
 
 type FileInfo struct {

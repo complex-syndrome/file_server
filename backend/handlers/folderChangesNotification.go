@@ -2,8 +2,9 @@ package handlers
 
 import (
 	"log"
-	"sync"
 	"net/http"
+	"strings"
+	"sync"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/gorilla/websocket"
@@ -17,10 +18,9 @@ var (
 			return true
 		},
 	}
-	clients   = make(map[*websocket.Conn]bool)
-	mutex     sync.Mutex
+	clients = make(map[*websocket.Conn]bool)
+	mutex   sync.Mutex
 )
-
 
 func FSChangeWebsocket(nchan <-chan string, w http.ResponseWriter, r *http.Request) {
 	if helper.FromInvalidIPs(r.RemoteAddr, true) {
@@ -50,27 +50,39 @@ func FSChangeWebsocket(nchan <-chan string, w http.ResponseWriter, r *http.Reque
 	}()
 
 	// Keeps conn alive
-	for {if _, _, err := conn.ReadMessage(); err != nil { break }}
+	for {
+		if _, _, err := conn.ReadMessage(); err != nil {
+			break
+		}
+	}
+}
+
+func RefreshSettingsOnChange(nchan <-chan string, settingsLabel string) {
+	for {
+		msg := <-nchan
+		if strings.HasPrefix(msg, settingsLabel) {
+			helper.RefreshSettings()
+		}
+	}
 }
 
 func Broadcaster(nchan <-chan string) {
 	for {
 		msg := <-nchan // When have msg, broadcast
 		log.Println("Websocket: ", msg)
-		
+
 		mutex.Lock()
 		for conn := range clients {
 			if err := conn.WriteMessage(websocket.TextMessage, []byte(msg)); err != nil {
 				conn.Close()
-				delete(clients, conn)	
+				delete(clients, conn)
 			}
 		}
 		mutex.Unlock()
 	}
 }
 
-
-func WatchFiles(nchan chan<- string, path string) { // chan<- only receive
+func WatchFiles(nchan chan<- string, path string, label string) { // chan<- only receive
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		log.Fatal(err)
@@ -89,7 +101,7 @@ func WatchFiles(nchan chan<- string, path string) { // chan<- only receive
 				return
 			}
 			log.Println("Watch Event:", event)
-			nchan <- "(FS) " + event.String()
+			nchan <- label + ": " + event.String()
 
 		case err, ok := <-watcher.Errors:
 			if !ok {

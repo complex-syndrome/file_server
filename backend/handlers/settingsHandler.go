@@ -1,14 +1,13 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
-	"encoding/json"
 
 	"github.com/complex-syndrome/file-server/backend/helper"
 )
-
 
 func SettingsHandler(w http.ResponseWriter, r *http.Request) {
 	if helper.FromInvalidIPs(r.RemoteAddr, true) {
@@ -16,17 +15,16 @@ func SettingsHandler(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Settings: Failed attempt to access by address: %s\n", r.RemoteAddr)
 		return
 	}
-	
+
 	if r.Method == http.MethodPost {
 		log.Printf("Setting change request from: %s\n", r.RemoteAddr)
 		editSettingsJSON(w, r)
 
 	} else {
 		log.Printf("Setting list request from: %s\n", r.RemoteAddr)
-		helper.ReplyJSON(w, helper.AllSettings)
+		helper.ReplyJSON(w, helper.CurrentSettings)
 	}
 }
-
 
 func editSettingsJSON(w http.ResponseWriter, r *http.Request) {
 	var newSettings map[string]any
@@ -35,13 +33,13 @@ func editSettingsJSON(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "An error occured while changing settings", http.StatusBadRequest)
 		log.Println("JSON Decoding Error: ", err)
 	}
-	
+
 	updated := false
 	for k, v := range newSettings {
 		switch k {
 		case "AllowOtherIPs": // Allow other IPs to directly access the API
 			if bV, ok := v.(bool); ok {
-				helper.AllowOtherIPs = bV
+				helper.CurrentSettings["AllowOtherIPs"] = bV
 				updated = true
 			}
 		default:
@@ -50,22 +48,14 @@ func editSettingsJSON(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if updated {
-		helper.WriteRefreshNewSettings(newSettings)
+		helper.WriteNewSettings(newSettings)
 		fmt.Fprintln(w, "Settings successfully updated.")
 		log.Printf("Settings successfully changed by %s.\n", r.RemoteAddr)
-		printSettings()
-		
+		helper.RefreshSettings()
+
 	} else {
 		http.Error(w, "Failed to update settings.", http.StatusNotModified)
 		log.Printf("Failed to change settings by %s.\n", r.RemoteAddr)
 	}
 
-}
-
-
-func printSettings() {
-	log.Println()
-	log.Println("Current Settings:")
-	for k, v := range helper.AllSettings { log.Printf("%s = %v\n", k, v) }
-	log.Println()
 }
