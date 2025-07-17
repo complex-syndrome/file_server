@@ -4,13 +4,13 @@ export function ConnectSocket(selfCloseRef: () => boolean, refreshFunction: () =
     socket.onopen = () => {
         refreshFunction();
     };
-
+    
 	socket.onmessage = (_) => {
-		const t = setTimeout(() => {
-			refreshFunction();
+        const t = setTimeout(() => {
+            refreshFunction();
 			setTimeoutRef(null);
 		}, 300);
-
+        
 		setTimeoutRef(t); 
 	};
     

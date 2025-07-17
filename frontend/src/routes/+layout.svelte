@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Toaster } from 'svelte-french-toast';
 	import IconLinks from './IconLinks.svelte';
+	import Header from './Header.svelte';
 
 	import svelte from '$lib/images/svelte.svg';
 	import golang from '$lib/images/golang.svg';
@@ -11,6 +12,8 @@
 </script>
 
 <div class="app">
+	<Header/>
+
 	<main>
 		{@render children()}	
 	</main>
