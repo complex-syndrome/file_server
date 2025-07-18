@@ -12,7 +12,9 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 )
+
 
 func IndexOf(slice []string, find string) int {
 	for k, v := range slice {
@@ -87,10 +89,12 @@ func ReplyJSON(w http.ResponseWriter, json_obj any) {
 	}
 }
 
+
 func ReadSettingsJSON() map[string]any {
 	data, err := os.ReadFile(CleanedSettingsPath)
 	if err != nil {
-		log.Fatalf("Unable to read %s. Aborting.\n", CleanedSettingsPath)
+		log.Printf("Unable to read %s. Generating default settings...\n", CleanedSettingsPath)
+		WriteSettings(defaultSettings)
 	}
 
 	var settings map[string]any
@@ -101,7 +105,12 @@ func ReadSettingsJSON() map[string]any {
 	return settings
 }
 
-func WriteNewSettings(newSettings map[string]any) {
+
+var settingsMutex sync.RWMutex
+func WriteSettings(newSettings map[string]any) {
+	settingsMutex.Lock()
+	defer settingsMutex.Unlock()
+
 	data, err := json.MarshalIndent(newSettings, "", "  ")
 	if err != nil {
 		log.Println("Unable to encode new setings into JSON format")
@@ -111,10 +120,12 @@ func WriteNewSettings(newSettings map[string]any) {
 	if err := os.WriteFile(CleanedSettingsPath, data, 0644); err != nil {
 		log.Fatalf("Error writing settings to %s: %v", CleanedSettingsPath, err)
 	}
-	RefreshSettings()
 }
 
 func RefreshSettings() {
+	settingsMutex.Lock()
+	defer settingsMutex.Unlock()
+
 	CurrentSettings = ReadSettingsJSON()
 
 	log.Println()
@@ -123,5 +134,11 @@ func RefreshSettings() {
 		log.Printf("%s = %v\n", k, v)
 	}
 	log.Println()
+}
 
+func GetCurrentSettings(key string) (any, bool) {
+	settingsMutex.RLock()
+	defer settingsMutex.RUnlock()
+	val, ok := CurrentSettings[key]
+	return val, ok
 }

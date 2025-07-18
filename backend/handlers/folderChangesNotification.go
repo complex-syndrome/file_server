@@ -3,13 +3,11 @@ package handlers
 import (
 	"log"
 	"net/http"
-	"strings"
 	"sync"
+	"time"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/gorilla/websocket"
-
-	"github.com/complex-syndrome/file-server/backend/helper"
 )
 
 var (
@@ -23,12 +21,6 @@ var (
 )
 
 func FSChangeWebsocket(nchan <-chan string, w http.ResponseWriter, r *http.Request) {
-	if helper.FromInvalidIPs(r.RemoteAddr, true) {
-		http.Error(w, "Access Denied: Local Connections Only", http.StatusForbidden)
-		log.Printf("Websocket: Failed attempt to access by address: %s\n", r.RemoteAddr)
-		return
-	}
-
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println("Upgrade Error:", err)
@@ -57,32 +49,26 @@ func FSChangeWebsocket(nchan <-chan string, w http.ResponseWriter, r *http.Reque
 	}
 }
 
-func RefreshSettingsOnChange(nchan <-chan string, settingsLabel string) {
-	for {
-		msg := <-nchan
-		if strings.HasPrefix(msg, settingsLabel) {
-			helper.RefreshSettings()
-		}
-	}
-}
-
 func Broadcaster(nchan <-chan string) {
 	for {
 		msg := <-nchan // When have msg, broadcast
-		log.Println("Websocket: ", msg)
 
 		mutex.Lock()
 		for conn := range clients {
+			conn.SetWriteDeadline(time.Now().Add(2 * time.Second))
 			if err := conn.WriteMessage(websocket.TextMessage, []byte(msg)); err != nil {
+				log.Printf("WebSocket write failed: %v", err)
 				conn.Close()
 				delete(clients, conn)
+			} else {
+				log.Printf("Sent message to client: %s", msg)
 			}
 		}
 		mutex.Unlock()
 	}
 }
 
-func WatchFiles(nchan chan<- string, path string, label string) { // chan<- only receive
+func WatchFiles(publish func(msg string), path string, label string) { // chan<- only receive
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		log.Fatal(err)
@@ -101,7 +87,7 @@ func WatchFiles(nchan chan<- string, path string, label string) { // chan<- only
 				return
 			}
 			log.Println("Watch Event:", event)
-			nchan <- label + ": " + event.String()
+			publish(label + ": " + event.String())
 
 		case err, ok := <-watcher.Errors:
 			if !ok {

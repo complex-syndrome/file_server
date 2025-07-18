@@ -1,5 +1,6 @@
 package helper
 
+
 const (
 	ResourcePath string = "../uploads"
 	ApiPath      string = "/api"
@@ -15,16 +16,15 @@ const (
 	SettingsCommand = "/settings"
 	WsNotifyCommand = "/ws"
 
-	FSLabel = "Resource Folder"
+	FSLabel       = "Resource Folder"
 	SettingsLabel = "Settings"
-
 )
 
 var (
 	defaultSettings = map[string]any{
 		"AllowOtherIPs": false,
 	}
-	CurrentSettings = ReadSettingsJSON()
+	CurrentSettings map[string]any
 
 	MaxUploadSize int64 = TranslateSize("5GB")
 

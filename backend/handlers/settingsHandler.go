@@ -4,12 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strings"
 	"net/http"
 
 	"github.com/complex-syndrome/file-server/backend/helper"
 )
 
-func SettingsHandler(w http.ResponseWriter, r *http.Request) {
+
+func SettingsHandler(w http.ResponseWriter, r *http.Request) {	
 	if helper.FromInvalidIPs(r.RemoteAddr, true) {
 		http.Error(w, "Access Denied: Local Connections Only", http.StatusForbidden)
 		log.Printf("Settings: Failed attempt to access by address: %s\n", r.RemoteAddr)
@@ -48,14 +50,24 @@ func editSettingsJSON(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if updated {
-		helper.WriteNewSettings(newSettings)
+		helper.WriteSettings(newSettings)
+		helper.RefreshSettings()
+		
 		fmt.Fprintln(w, "Settings successfully updated.")
 		log.Printf("Settings successfully changed by %s.\n", r.RemoteAddr)
-		helper.RefreshSettings()
 
 	} else {
 		http.Error(w, "Failed to update settings.", http.StatusNotModified)
 		log.Printf("Failed to change settings by %s.\n", r.RemoteAddr)
 	}
 
+}
+
+func RefreshSettingsOnChange(nchan <-chan string, settingsLabel string) {
+	for {
+		msg := <-nchan
+		if strings.HasPrefix(msg, settingsLabel) {
+			helper.RefreshSettings()
+		}
+	}
 }

@@ -10,15 +10,14 @@ import (
 )
 
 func main() {
-	broadcast := make(chan string)
-	go handlers.WatchFiles(broadcast, helper.CleanedResourcePath, helper.FSLabel)       // Watch folder change
-	go handlers.WatchFiles(broadcast, helper.CleanedSettingsPath, helper.SettingsLabel) // Watch file change
-	
 	helper.TryMkdir(helper.CleanedResourcePath)
 	fmt.Println("Upload Path: " + helper.CleanedResourcePath)
 	helper.RefreshSettings()
-	fmt.Println("AllowOtherIPs: ", helper.CurrentSettings["AllowOtherIPs"])
 
+	fanOut := &helper.FanOut{}
+
+	go handlers.WatchFiles(fanOut.Publish, helper.CleanedResourcePath, helper.FSLabel)       // Watch folder change
+	go handlers.WatchFiles(fanOut.Publish, helper.CleanedSettingsPath, helper.SettingsLabel) // Watch file change
 
 	// File Ops
 	http.HandleFunc(helper.ApiPath+helper.ListCommand, handlers.ListFilesHandler)
@@ -28,12 +27,12 @@ func main() {
 
 	// Settings
 	http.HandleFunc(helper.ApiPath+helper.SettingsCommand, handlers.SettingsHandler)
-	go handlers.RefreshSettingsOnChange(broadcast, helper.SettingsLabel) // Refresh on change
+	go handlers.RefreshSettingsOnChange(fanOut.Subscribe(), helper.SettingsLabel) // Refresh on change
 
 	// Broadcast to all connections when file / folder changes
-	go handlers.Broadcaster(broadcast)
+	go handlers.Broadcaster(fanOut.Subscribe())
 	http.HandleFunc(helper.ApiPath+helper.WsNotifyCommand,
-		func(w http.ResponseWriter, r *http.Request) { handlers.FSChangeWebsocket(broadcast, w, r) })
+		func(w http.ResponseWriter, r *http.Request) { handlers.FSChangeWebsocket(fanOut.Subscribe(), w, r) })
 
 	log.Printf("Server started at http://%s:%d%s\n", helper.GetMyIP().String(), helper.Port, helper.ApiPath)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", helper.Port), nil))

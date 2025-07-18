@@ -1,7 +1,8 @@
 export function ConnectSocket(selfCloseRef: () => boolean, refreshFunction: () => void, setTimeoutRef: (v: ReturnType<typeof setTimeout> | null) => void): WebSocket {
-    const socket = new WebSocket("ws://localhost:8080/api/ws");
-
+    const socket = new WebSocket("ws://192.168.0.243:8080/api/ws");
+    
     socket.onopen = () => {
+        console.log("WebSocket connection established.")
         refreshFunction();
     };
     
@@ -16,7 +17,7 @@ export function ConnectSocket(selfCloseRef: () => boolean, refreshFunction: () =
     
     
     socket.onclose = (_) => {
-        if (!selfCloseRef) {
+        if (!selfCloseRef()) {
             console.log("Websocket conn disconnected. Attempting to reconnect...")
             setTimeout(() => { ConnectSocket(selfCloseRef, refreshFunction, setTimeoutRef); }, 3000);
         }

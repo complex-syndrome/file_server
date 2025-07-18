@@ -28,7 +28,7 @@ func ListFilesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Printf("List request from %s\n", r.RemoteAddr)
 
-	// Read db
+	// Read folder
 	files, err := os.ReadDir(helper.CleanedResourcePath)
 	if err != nil {
 		http.Error(w, "Unable to read saved files", http.StatusInternalServerError)

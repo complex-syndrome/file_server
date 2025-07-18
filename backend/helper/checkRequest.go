@@ -1,12 +1,13 @@
 package helper
 
 import (
+	"log"
 	"net"
 	"path/filepath"
 	"strings"
 )
 
-func FromInvalidIPs(addr string, important bool) bool { // 	
+func FromInvalidIPs(addr string, important bool) bool {
 	host, _, err := net.SplitHostPort(addr)
 	if err != nil {
 		return true
@@ -20,7 +21,20 @@ func FromInvalidIPs(addr string, important bool) bool { //
 		return true
 	}
 	
-	return !CurrentSettings["AllowOtherIPs"].(bool)
+	val, ok := GetCurrentSettings("AllowOtherIPs")
+	if ok {
+		if AllowOtherIPs, ok := val.(bool); ok {
+			return !AllowOtherIPs
+
+		} else {
+			log.Println("Unable to get current settings.")
+			return true
+		}
+		
+	} else {
+		log.Println("AllowOtherIPs is not a boolean.")
+		return true
+	}
 }
 
 

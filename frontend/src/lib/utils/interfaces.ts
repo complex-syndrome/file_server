@@ -4,3 +4,8 @@ export interface FileInfo {
     mime: string;
 }
 
+export interface SettingType {
+    title: string;
+    description: string;
+    jsonKey: string;
+}

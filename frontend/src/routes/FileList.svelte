@@ -104,21 +104,21 @@
     <input class="hidden" type="file" multiple bind:this={fileInput} onchange={displayUploadFileDialog}/>
 
     <!-- Search and upload -->
-    <div class="flex items-center gap-2 m-8">
+    <div class="flex flex-wrap items-center gap-2 sm:m-4">
         <input 
-            class="p-4 flex-grow align-middle rounded-xl border border-gray-300 
-            focus:ring-orange-500 focus:border-orange-500"
-            type="text"
-            bind:value={searchText}
-            oninput={() => { filteredFiles = filterFilesFuzzy(searchText, allFiles); }}
-            placeholder="Search your files here...">
+        class="p-4 flex-grow min-w-[200px] w-full sm:w-auto align-middle rounded-xl border border-gray-300 
+        focus:ring-orange-500 focus:border-orange-500"
+        type="text"
+        bind:value={searchText}
+        oninput={() => { filteredFiles = filterFilesFuzzy(searchText, allFiles); }}
+        placeholder="Search your files here...">
         <button 
-            onclick={() => { fileInput.click() }}
-            class="p-4 transition rounded-xl border-2 flex items-center justify-center gap-2 min-w-3xs
-                text-orange-500 border-orange-500 hover:cursor-pointer 
-                hover:bg-orange-500 hover:text-white">
-            <FileUp/>
-            Upload Files
+        onclick={() => { fileInput.click() }}
+        class="p-4 w-full mb-4 sm:mb-0 sm:w-auto transition rounded-xl border-2 flex items-center justify-center gap-2 flex-grow
+            text-orange-500 border-orange-500 hover:cursor-pointer 
+            hover:bg-orange-500 hover:text-white">
+        <FileUp/>
+        Upload Files
         </button>
     </div>
 
@@ -126,17 +126,17 @@
     {#if filteredFiles && filteredFiles.length > 0}
         <ul>
             {#each filteredFiles as file}
-                <li class="p-4 m-8 mt-0 border-2 border-neutral-200 rounded-xl shadow-xl flex items-center hover:border-orange-500">
+                <li class="p-4 m-4 sm:m-8 mt-0 border-2 border-neutral-200 rounded-xl shadow-xl flex flex-col sm:flex-row sm:items-center gap-4 hover:border-orange-500">
 
-                    <div class="p-4 flex flex-col gap-1">
-                    <p class="font-semibold text-gray-800 truncate max-w-[500px] min-w-0">{file.name}</p>
+                    <div class="p-4 flex flex-col gap-1 w-full sm:w-auto flex-grow min-w-0">
+                    <p class="font-semibold text-gray-800 truncate max-w-full">{file.name}</p>
                     <div class="flex gap-4 text-sm">
                         <p class="text-gray-700">{file.size}</p>
                         <p class="text-gray-500">{file.mime}</p>
                     </div>
                     </div>
                     
-                    <div class="ml-auto flex gap-2">
+                    <div class="ml-auto flex flex-row gap-2 w-full sm:w-auto">
                         <button aria-label="DownloadFile"
                         onclick={() => apiDownloadFile(file.name)}
                         class="p-4 transition rounded-xl 
