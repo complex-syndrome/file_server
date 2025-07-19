@@ -24,9 +24,9 @@
 			className: 'p-8 shadow-4xl text-lg rounded-xl'
 		}}
 	/>
+
 	<footer>
 		<IconLinks />
-
 		<div class="mt-4 flex flex-col items-end gap-2 text-xs text-gray-500">
 			<span>© 2025 Mah Han Cheng</span>
 			<div class="flex">

@@ -1,8 +1,7 @@
 <script lang="ts">
-	import toast from 'svelte-french-toast';
+	import { onMount, onDestroy } from 'svelte';
 
 	import { SettingDescriptions } from '$lib/utils/consts';
-	import { onMount, onDestroy } from 'svelte';
 	import { ConnectSocket } from '$lib/api/ws';
 	import BoolSwitch from './BoolSwitch.svelte';
 
@@ -17,12 +16,14 @@
 		refreshTimeout = t;
 	}
 
+	// Connect to websocket (refreshfunc is already runned once on ws open)
 	onMount(() => {
 		setTimeout(() => {
 			socket = ConnectSocket(() => selfClose, refreshSettings, setRefreshTimeout);
 		}, 0);
 	});
 
+	// Close ws
 	onDestroy(() => {
 		selfClose = true;
 		if (refreshTimeout) clearTimeout(refreshTimeout);
@@ -33,7 +34,7 @@
 
 	async function refreshSettings(): Promise<any> {
 		try {
-			const res = await fetch(`${import.meta.env.VITE_API_URL}/settings`);
+			const res = await fetch(`${import.meta.env.VITE_API_URL}/settings/list`);
 			currentSettings = await res.json();
 		} catch (error) {
 			console.error(error);
@@ -48,7 +49,7 @@
 </svelte:head>
 
 <div>
-	<h1 class="mb-10 text-2xl font-bold">Settings</h1>
+	<h1 class="m-10 text-2xl font-bold">Settings</h1>
 
 	<div class="mx-auto w-full max-w-2xl space-y-6">
 		{#each SettingDescriptions as setting}
