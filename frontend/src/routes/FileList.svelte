@@ -23,33 +23,14 @@
     }
 
     onMount(() => {
+        InitialLoadFiles()
+        
+        // Websocket to refresh (settimeout for running after call stack / main tasks)
+        setTimeout(() => { socket = ConnectSocket(() => selfClose, refreshFileList, setRefreshTimeout); }, 0);
+        
         // For pasting files to upload
-        window.addEventListener('paste', pasteUpload);
-        
-        // Load files
-        (async () => {
-            try {
-                allFiles = await toast.promise(
-                    apiListFiles(),
-                    {
-                        loading: 'Loading files...',
-                        success: 'Files loaded successfully!',
-                        error: 'Error: Could not load files.',
-                    }
-                );
-                
-            } catch (error) {
-                allFiles = []
-            }
-            filteredFiles = allFiles;
-
-        })();
-        
-        // Websocket to refresh
-        socket = ConnectSocket(() => { return selfClose; }, refreshFileList, setRefreshTimeout)
-
-        // Prevent multiple listeners
-        return () => {
+        window.addEventListener('paste', pasteUpload); 
+        return () => { // Prevent multiple listeners
             window.removeEventListener('paste', pasteUpload);
         };
 
@@ -97,6 +78,23 @@
         }
     }
 
+    async function InitialLoadFiles() {
+        try {
+            allFiles = await toast.promise(
+                apiListFiles(),
+                {
+                    loading: 'Loading files...',
+                    success: 'Files loaded successfully!',
+                    error: 'Error: Could not load files.',
+                }
+            );
+            
+        } catch (error) {
+            allFiles = []
+            console.error(error)
+        }
+        filteredFiles = allFiles;
+    }
 </script>
 
 <div>
@@ -114,7 +112,7 @@
         placeholder="Search your files here...">
         <button 
         onclick={() => { fileInput.click() }}
-        class="p-4 w-full mb-4 sm:mb-0 sm:w-auto transition rounded-xl border-2 flex items-center justify-center gap-2 flex-grow
+        class="sm:max-w-[25%] p-4 w-full mb-4 sm:mb-0 sm:w-auto transition rounded-xl border-2 flex items-center justify-center gap-2 flex-grow
             text-orange-500 border-orange-500 hover:cursor-pointer 
             hover:bg-orange-500 hover:text-white">
         <FileUp/>

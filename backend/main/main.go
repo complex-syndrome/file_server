@@ -10,32 +10,40 @@ import (
 )
 
 func main() {
-	helper.TryMkdir(helper.CleanedResourcePath)
-	fmt.Println("Upload Path: " + helper.CleanedResourcePath)
+	// Envs
+	helper.ImportEnvs()
+	helper.GenerateCleanedPaths()
+
+	// Resources
+	helper.TryMkdir(helper.ResourcePath)
 	helper.RefreshSettings()
 
-	fanOut := &helper.FanOut{}
+	// Log
+	fmt.Println("Upload Path: " + helper.ResourcePath)
+	fmt.Println("Settings Path: " + helper.SettingsPath)
+	fmt.Println("Max upload size: " + helper.CalculateSize(helper.MaxUploadSize))
 
-	go handlers.WatchFiles(fanOut.Publish, helper.CleanedResourcePath, helper.FSLabel)       // Watch folder change
-	go handlers.WatchFiles(fanOut.Publish, helper.CleanedSettingsPath, helper.SettingsLabel) // Watch file change
-
-	// File Ops
+	// Handlers
 	http.HandleFunc(helper.ApiPath+helper.ListCommand, handlers.ListFilesHandler)
 	http.HandleFunc(helper.ApiPath+helper.UploadCommand, handlers.UploadFileHandler)
 	http.HandleFunc(helper.ApiPath+helper.DownloadCommand, handlers.DownloadFileHandler)
 	http.HandleFunc(helper.ApiPath+helper.DeleteCommand, handlers.DeleteFileHandler)
-
-	// Settings
 	http.HandleFunc(helper.ApiPath+helper.SettingsCommand, handlers.SettingsHandler)
-	go handlers.RefreshSettingsOnChange(fanOut.Subscribe(), helper.SettingsLabel) // Refresh on change
 
-	// Broadcast to all connections when file / folder changes
-	go handlers.Broadcaster(fanOut.Subscribe())
-	http.HandleFunc(helper.ApiPath+helper.WsNotifyCommand,
+	// Fsnotify + Websocket
+	fanOut := &helper.FanOut{}
+	go handlers.WatchFiles(fanOut.Publish, helper.ResourcePath, helper.FSLabel)       // Watch folder change (pub)
+	go handlers.WatchFiles(fanOut.Publish, helper.SettingsPath, helper.SettingsLabel) // Watch file change (pub)
+
+	go handlers.RefreshSettingsOnChange(fanOut.Subscribe(), helper.SettingsLabel) // Refresh settings on change (sub)
+	go handlers.Broadcaster(fanOut.Subscribe())                                   // Broadcast change on change (sub)
+
+	http.HandleFunc(helper.ApiPath+helper.WsNotifyCommand, // Websocket handler
 		func(w http.ResponseWriter, r *http.Request) { handlers.FSChangeWebsocket(fanOut.Subscribe(), w, r) })
 
-	log.Printf("Server started at http://%s:%d%s\n", helper.GetMyIP().String(), helper.Port, helper.ApiPath)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", helper.Port), nil))
+	// Log again
+	log.Printf("Backend server started at http://%s:%d%s\n", helper.GetMyIP().String(), helper.BackendPort, helper.ApiPath)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", helper.BackendPort), helper.WithCORS(http.DefaultServeMux)))
 
 	<-make(chan struct{})
 }

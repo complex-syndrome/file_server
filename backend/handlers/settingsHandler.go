@@ -51,8 +51,6 @@ func editSettingsJSON(w http.ResponseWriter, r *http.Request) {
 
 	if updated {
 		helper.WriteSettings(newSettings)
-		helper.RefreshSettings()
-		
 		fmt.Fprintln(w, "Settings successfully updated.")
 		log.Printf("Settings successfully changed by %s.\n", r.RemoteAddr)
 

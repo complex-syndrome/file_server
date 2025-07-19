@@ -1,11 +1,7 @@
 package helper
 
-
 const (
-	ResourcePath string = "../uploads"
-	ApiPath      string = "/api"
-	Port         uint64 = 8080
-	SettingsJSON string = "./settings.json"
+	ApiPath string = "/api"
 
 	HelpCommand     = "/help"
 	ListCommand     = "/list"
@@ -21,15 +17,16 @@ const (
 )
 
 var (
+	ResourcePath  string = "../uploads"
+	SettingsPath  string = "../settings.json"
+	BackendPort   uint64 = 8080
+	FrontendPort  uint64 = 5173
+	MaxUploadSize int64  = TranslateSize("5GB")
+
 	defaultSettings = map[string]any{
 		"AllowOtherIPs": false,
 	}
 	CurrentSettings map[string]any
-
-	MaxUploadSize int64 = TranslateSize("5GB")
-
-	CleanedResourcePath string = CleanPath(ResourcePath)
-	CleanedSettingsPath string = CleanPath(SettingsJSON)
 )
 
 type FileInfo struct {

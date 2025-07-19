@@ -3,6 +3,7 @@ package helper
 import (
 	"log"
 	"net"
+	"net/http"
 	"path/filepath"
 	"strings"
 )
@@ -47,4 +48,22 @@ func IsInvalidFileName(fileName string, safeFileName string) bool {
 		strings.Contains(safeFileName, "..") ||
 		strings.Contains(safeFileName, "/") ||
 		strings.Contains(safeFileName, "\\")
+}
+
+func WithCORS(handler http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if !FromInvalidIPs(r.RemoteAddr, true) {
+			w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
+			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+			w.Header().Set("Access-Control-Allow-Credentials", "true")
+		}
+
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusNoContent)
+			return
+		}
+
+		handler.ServeHTTP(w, r)
+	})
 }

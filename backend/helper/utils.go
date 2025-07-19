@@ -13,8 +13,55 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+
+	"github.com/joho/godotenv"
 )
 
+func ImportEnvs() {
+	err := godotenv.Load("../.env")
+	if err != nil {
+		log.Println("Error loading .env file. Setting all configs to default.")
+	}
+
+	newBPort, err := strconv.ParseUint(os.Getenv("BACKEND_PORT"), 10, 64)
+	if err != nil {
+		log.Printf("BACKEND_PORT env value not found, using default port %d.", BackendPort)
+		log.Println(err)
+	} else {
+		BackendPort = newBPort
+	}
+
+	newFPort, err := strconv.ParseUint(os.Getenv("FRONTEND_PORT"), 10, 64)
+	if err != nil {
+		log.Printf("FRONTEND_PORT env value not found, using default port %d.", FrontendPort)
+		log.Println(err)
+	} else {
+		FrontendPort = newFPort
+	}
+
+	newResourcePath := os.Getenv("UPLOADS_FOLDER")
+	if newResourcePath == "" {
+		log.Printf("UPLOADS_FOLDER env value not found, using default path %s.", ResourcePath)
+		log.Println(err)
+	} else {
+		if strings.HasPrefix(newResourcePath, "./") || strings.HasPrefix(newResourcePath, "../") {
+			newResourcePath = filepath.Join("..", newResourcePath)
+		}
+		ResourcePath = newResourcePath
+	}
+
+	if newMaxUploadSize := TranslateSize(os.Getenv("MAX_UPLOAD_SIZE")); newMaxUploadSize == -1 {
+		log.Printf("MAX_UPLOAD_SIZE env value not found, using default value %s.", CalculateSize(MaxUploadSize))
+		log.Println(err)
+	} else {
+		MaxUploadSize = newMaxUploadSize
+	}
+}
+
+func GenerateCleanedPaths() {
+	ResourcePath = CleanPath(ResourcePath)
+	SettingsPath = CleanPath(SettingsPath)
+}
 
 func IndexOf(slice []string, find string) int {
 	for k, v := range slice {
@@ -35,6 +82,7 @@ func GetMyIP() net.IP {
 }
 
 func TryMkdir(path string) {
+	log.Println("Path:", path)
 	if err := os.MkdirAll(path, 0777); err != nil {
 		log.Fatalf("Could not create directory: %v", err)
 	}
@@ -43,7 +91,7 @@ func TryMkdir(path string) {
 func CleanPath(path string) string {
 	cPath, err := filepath.Abs(path)
 	if err != nil {
-		log.Fatal("Directory cleaning error:", err)
+		log.Fatal("Path cleaning error:", err)
 	}
 	return cPath
 }
@@ -89,24 +137,23 @@ func ReplyJSON(w http.ResponseWriter, json_obj any) {
 	}
 }
 
-
 func ReadSettingsJSON() map[string]any {
-	data, err := os.ReadFile(CleanedSettingsPath)
+	data, err := os.ReadFile(SettingsPath)
 	if err != nil {
-		log.Printf("Unable to read %s. Generating default settings...\n", CleanedSettingsPath)
+		log.Printf("Unable to read %s. Generating default settings...\n", SettingsPath)
 		WriteSettings(defaultSettings)
 	}
 
 	var settings map[string]any
 	if err = json.Unmarshal(data, &settings); err != nil {
-		log.Printf("Error during decoding %s: %v\n", CleanedSettingsPath, err)
+		log.Printf("Error during decoding %s: %v\n", SettingsPath, err)
 		return defaultSettings
 	}
 	return settings
 }
 
-
 var settingsMutex sync.RWMutex
+
 func WriteSettings(newSettings map[string]any) {
 	settingsMutex.Lock()
 	defer settingsMutex.Unlock()
@@ -117,8 +164,8 @@ func WriteSettings(newSettings map[string]any) {
 		return
 	}
 
-	if err := os.WriteFile(CleanedSettingsPath, data, 0644); err != nil {
-		log.Fatalf("Error writing settings to %s: %v", CleanedSettingsPath, err)
+	if err := os.WriteFile(SettingsPath, data, 0644); err != nil {
+		log.Fatalf("Error writing settings to %s: %v", SettingsPath, err)
 	}
 }
 

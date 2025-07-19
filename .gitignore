@@ -1,1 +1,5 @@
 uploads
+
+nginx
+docker-compose.yml
+Dockerfile

@@ -1,5 +1,7 @@
 <script lang="ts">
-	import { SettingDescriptions } from "$lib/utils/settingType";
+	import toast from "svelte-french-toast";
+
+	import { SettingDescriptions } from "$lib/utils/consts";
 	import { onMount, onDestroy } from "svelte";
 	import { ConnectSocket } from "$lib/api/ws";
 	import BoolSwitch from "./BoolSwitch.svelte"
@@ -9,21 +11,16 @@
 	let socket: WebSocket;
     let selfClose: boolean = false;
     let refreshTimeout: ReturnType<typeof setTimeout> | null = null;
-	
-	async function refreshSettings() {
-		const res = await fetch("api/settings");
-		currentSettings = await res.json();
-	}
 
     function setRefreshTimeout(t: ReturnType<typeof setTimeout> | null) {
         if (refreshTimeout) clearTimeout(refreshTimeout);
         refreshTimeout = t;
     }
 
-	onMount(async () => {
-		await refreshSettings()
-        socket = ConnectSocket(() => { return selfClose; }, refreshSettings, setRefreshTimeout)
+	onMount(() => {
+		setTimeout(() => { socket = ConnectSocket(() => selfClose, refreshSettings, setRefreshTimeout); }, 0);
 	})
+
 	onDestroy(() => {
 		selfClose = true;	
 		if (refreshTimeout) clearTimeout(refreshTimeout);
@@ -31,11 +28,16 @@
             socket.close();
         }
     });
-	// currentSettings = {
-	//		"AllowAllIPs": true
-	//		"ResourcePath": "/path/somepath"
-	// }
 
+	async function refreshSettings(): Promise<any> {
+		try {
+			const res = await fetch(`${import.meta.env.VITE_API_URL}/settings`);
+			currentSettings = await res.json();
+        } catch (error) {
+			console.error(error)
+			currentSettings = {}
+		}
+	}
 </script>
 
 

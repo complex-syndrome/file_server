@@ -1,5 +1,5 @@
 export function ConnectSocket(selfCloseRef: () => boolean, refreshFunction: () => void, setTimeoutRef: (v: ReturnType<typeof setTimeout> | null) => void): WebSocket {
-    const socket = new WebSocket("ws://192.168.0.243:8080/api/ws");
+    const socket = new WebSocket(import.meta.env.VITE_WS_URL);
     
     socket.onopen = () => {
         console.log("WebSocket connection established.")

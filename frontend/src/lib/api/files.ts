@@ -4,14 +4,14 @@ import type { FileInfo } from '$lib/utils/interfaces';
 
 
 export async function apiListFiles(): Promise<FileInfo[]> {
-    const response = await fetch('/api/list');
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/list`);
     if (!response.ok) { throw Error }
     return await response.json();
 }
 
 export async function apiDownloadFile(fileName: string): Promise<void> {
     try {
-        const response = await fetch(`/api/download?file=${encodeURIComponent(fileName)}`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/download?file=${encodeURIComponent(fileName)}`);
         if (!response.ok) { throw new Error(`Server responded with ${response.status}`); }
 
         const blob = await toast.promise(
@@ -32,7 +32,7 @@ export async function apiDownloadFile(fileName: string): Promise<void> {
 
 export async function apiDeleteFile(fileName: string) {
     try {
-        const response = await fetch(`/api/delete?file=${encodeURIComponent(fileName)}`, { method: 'DELETE' });
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/delete?file=${encodeURIComponent(fileName)}`, { method: 'DELETE' });
         const reply = await response.text()
         if (!response.ok) throw Error(reply)
             toast.success(reply)
@@ -46,7 +46,7 @@ export async function apiUploadFile(file: File): Promise<void> {
     formData.append("file", file);
     
     try {
-        const response = await fetch(`/api/upload`, { 
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/upload`, { 
             method: 'POST',
             body: formData,
         });

@@ -29,10 +29,10 @@ func ListFilesHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("List request from %s\n", r.RemoteAddr)
 
 	// Read folder
-	files, err := os.ReadDir(helper.CleanedResourcePath)
+	files, err := os.ReadDir(helper.ResourcePath)
 	if err != nil {
 		http.Error(w, "Unable to read saved files", http.StatusInternalServerError)
-		log.Printf("ReadDir error (%s): %v\n", helper.CleanedResourcePath, err)
+		log.Printf("ReadDir error (%s): %v\n", helper.ResourcePath, err)
 		return
 	}
 
@@ -52,7 +52,7 @@ func ListFilesHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Mime type
-		filePath := filepath.Join(helper.CleanedResourcePath, info.Name())
+		filePath := filepath.Join(helper.ResourcePath, info.Name())
 		mime, err := mimetype.DetectFile(filePath)
 		if err != nil {
 			log.Printf("Mime-type detection error (%s): %v\n", info.Name(), err)
@@ -115,13 +115,13 @@ func UploadFileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Handle overwrite
-	dstPath := filepath.Join(helper.CleanedResourcePath, safeFileName)
+	dstPath := filepath.Join(helper.ResourcePath, safeFileName)
 	i := 1
 	for {
 		if _, err := os.Stat(dstPath); err != nil {
 			break
 		}
-		dstPath = filepath.Join(helper.CleanedResourcePath, fmt.Sprintf("%s.%d", safeFileName, i))
+		dstPath = filepath.Join(helper.ResourcePath, fmt.Sprintf("%s.%d", safeFileName, i))
 		i++
 	}
 
@@ -173,14 +173,14 @@ func DownloadFileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Not found
-	filePath := filepath.Join(helper.CleanedResourcePath, safeFileName)
+	filePath := filepath.Join(helper.ResourcePath, safeFileName)
 	if _, err := os.Stat(filePath); err != nil {
 		http.Error(w, "File not found: "+fileName, http.StatusNotFound)
 		log.Printf("Download Error: %v\n", err)
 		return
 	}
 
-	http.ServeFile(w, r, fmt.Sprintf("%s/%s", helper.CleanedResourcePath, fileName))
+	http.ServeFile(w, r, fmt.Sprintf("%s/%s", helper.ResourcePath, fileName))
 	fmt.Fprintf(w, "Download successful: %s\n", fileName)
 	log.Printf("Downloaded file (%s) by %s\n", fileName, r.RemoteAddr)
 }
@@ -216,7 +216,7 @@ func DeleteFileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Not found
-	filePath := filepath.Join(helper.CleanedResourcePath, safeFileName)
+	filePath := filepath.Join(helper.ResourcePath, safeFileName)
 	if _, err := os.Stat(filePath); err != nil {
 		http.Error(w, "File not found: "+fileName, http.StatusNotFound)
 		log.Printf("Delete Error: %v\n", err)
