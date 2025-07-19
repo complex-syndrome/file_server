@@ -12,28 +12,28 @@
 </script>
 
 <div class="app">
-	<Header/>
+	<Header />
 
 	<main>
-		{@render children()}	
+		{@render children()}
 	</main>
 
-	<Toaster 
-	position = "bottom-right"
-	toastOptions={{
-		className: "p-8 shadow-4xl text-lg rounded-xl",
-	}}
+	<Toaster
+		position="bottom-right"
+		toastOptions={{
+			className: 'p-8 shadow-4xl text-lg rounded-xl'
+		}}
 	/>
 	<footer>
-		<IconLinks/>
-		
-		<div class="flex flex-col items-end gap-2 text-xs text-gray-500 mt-4">
+		<IconLinks />
+
+		<div class="mt-4 flex flex-col items-end gap-2 text-xs text-gray-500">
 			<span>© 2025 Mah Han Cheng</span>
 			<div class="flex">
 				<span class="pr-2">Powered by </span>
-				<img src={svelte} alt="svelte" class="w-4 h-4"/>
-				<span class="pl-2 pr-2">+</span>
-				<img src={golang} alt="golang" class="w-5 h-5"/>
+				<img src={svelte} alt="svelte" class="h-4 w-4" />
+				<span class="pr-2 pl-2">+</span>
+				<img src={golang} alt="golang" class="h-5 w-5" />
 			</div>
 		</div>
 	</footer>
@@ -64,7 +64,7 @@
 		align-items: center;
 		padding: 12px;
 	}
-	
+
 	@media (min-width: 480px) {
 		footer {
 			padding: 12px 0;

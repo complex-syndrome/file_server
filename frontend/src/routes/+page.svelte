@@ -1,5 +1,5 @@
 <script lang="ts">
-	import FileList from "./FileList.svelte";
+	import FileList from './FileList.svelte';
 </script>
 
 <svelte:head>
@@ -9,5 +9,5 @@
 
 <section>
 	<h1 class="m-10">File Uploader</h1>
-	<FileList/>
+	<FileList />
 </section>
