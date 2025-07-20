@@ -1,6 +1,7 @@
 package helper
 
 import (
+	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -9,8 +10,11 @@ import (
 )
 
 func FromInvalidIPs(addr string, important bool) bool {
+	if !strings.Contains(addr, ":") { addr += ":1"; }
+
 	host, _, err := net.SplitHostPort(addr)
 	if err != nil {
+		fmt.Println("log: ERROR", err)
 		return true
 	}
 	
@@ -18,7 +22,7 @@ func FromInvalidIPs(addr string, important bool) bool {
 		return false
 	}
 	
-	if important { // Stuff like settings should be only editable by the host machine or webui
+	if important { // Stuff like settings should be only editable by the host machine 
 		return true
 	}
 	
@@ -26,7 +30,7 @@ func FromInvalidIPs(addr string, important bool) bool {
 	if ok {
 		if AllowOtherIPs, ok := val.(bool); ok {
 			return !AllowOtherIPs
-
+			
 		} else {
 			log.Println("Unable to get current settings.")
 			return true

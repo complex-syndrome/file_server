@@ -24,11 +24,13 @@ func main() {
 	fmt.Println("Max upload size: " + helper.CalculateSize(helper.MaxUploadSize))
 
 	// Handlers
-	http.HandleFunc(helper.ApiPath+helper.ListCommand, handlers.ListFilesHandler)
-	http.HandleFunc(helper.ApiPath+helper.UploadCommand, handlers.UploadFileHandler)
-	http.HandleFunc(helper.ApiPath+helper.DownloadCommand, handlers.DownloadFileHandler)
-	http.HandleFunc(helper.ApiPath+helper.DeleteCommand, handlers.DeleteFileHandler)
-	http.HandleFunc(helper.ApiPath+helper.SettingsCommand, handlers.SettingsHandler)
+	http.HandleFunc(helper.ListFilesURL, handlers.ListFilesHandler)
+	http.HandleFunc(helper.UploadFileURL, handlers.UploadFileHandler)
+	http.HandleFunc(helper.DownloadFileURL, handlers.DownloadFileHandler)
+	http.HandleFunc(helper.DeleteFileURL, handlers.DeleteFileHandler)
+	http.HandleFunc(helper.ListSettingsURL, handlers.ListSettingsHandler)
+	http.HandleFunc(helper.UpdateSettingsURL, handlers.EditSettingsHandler)
+	http.HandleFunc(helper.AllowIPSettingsURL, handlers.AllowIPSettingsHandler)
 
 	// Fsnotify + Websocket
 	fanOut := &helper.FanOut{}
@@ -38,7 +40,7 @@ func main() {
 	go handlers.RefreshSettingsOnChange(fanOut.Subscribe(), helper.SettingsLabel) // Refresh settings on change (sub)
 	go handlers.Broadcaster(fanOut.Subscribe())                                   // Broadcast change on change (sub)
 
-	http.HandleFunc(helper.ApiPath+helper.WsNotifyCommand, // Websocket handler
+	http.HandleFunc(helper.WebSocketURL, // Websocket handler
 		func(w http.ResponseWriter, r *http.Request) { handlers.FSChangeWebsocket(fanOut.Subscribe(), w, r) })
 
 	// Log again

@@ -35,4 +35,7 @@ if [ ! -d frontend/build ]; then (
 (
     cd frontend || exit
     bun run preview --host --open --port "$FRONTEND_PORT"
+    # To access settings in web ui, please use 'bun run dev' instead of 'bun run preview' (Will TODO user auth to replace this)
+    # Direct api calls are not affected
+
 ) &

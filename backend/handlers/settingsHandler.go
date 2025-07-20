@@ -4,33 +4,68 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"strings"
 	"net/http"
+	"strings"
 
 	"github.com/complex-syndrome/file-server/backend/helper"
 )
 
-
-func SettingsHandler(w http.ResponseWriter, r *http.Request) {	
+func AllowIPSettingsHandler(w http.ResponseWriter, r *http.Request) {
 	if helper.FromInvalidIPs(r.RemoteAddr, true) {
 		http.Error(w, "Access Denied: Local Connections Only", http.StatusForbidden)
 		log.Printf("Settings: Failed attempt to access by address: %s\n", r.RemoteAddr)
 		return
 	}
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	log.Printf("Setting verify request from: %s\n", r.RemoteAddr)
 
-	if r.Method == http.MethodPost {
-		log.Printf("Setting change request from: %s\n", r.RemoteAddr)
-		editSettingsJSON(w, r)
+	var req helper.IpJSON
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "An error occured while decoding JSON", http.StatusBadRequest)
+		log.Println("JSON Decoding Error: ", err)
+		return
+	}
 
+	if helper.FromInvalidIPs(req.IP, true) { // dummy port
+		log.Println("Rejected invalid IP:", req.IP)
+		http.Error(w, "IP Not allowed", http.StatusMethodNotAllowed)
 	} else {
-		log.Printf("Setting list request from: %s\n", r.RemoteAddr)
-		helper.ReplyJSON(w, helper.CurrentSettings)
+		log.Println("Allowed valid IP:", req.IP)
+		fmt.Fprintln(w, "IP allowed")
 	}
 }
 
-func editSettingsJSON(w http.ResponseWriter, r *http.Request) {
-	var newSettings map[string]any
+func ListSettingsHandler(w http.ResponseWriter, r *http.Request) {
+	if helper.FromInvalidIPs(r.RemoteAddr, true) {
+		http.Error(w, "Access Denied: Local Connections Only", http.StatusForbidden)
+		log.Printf("Settings: Failed attempt to access by address: %s\n", r.RemoteAddr)
+		return
+	}
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
 
+	log.Printf("Setting list request from: %s\n", r.RemoteAddr)
+	helper.ReplyJSON(w, helper.CurrentSettings)
+}
+
+func EditSettingsHandler(w http.ResponseWriter, r *http.Request) {
+	if helper.FromInvalidIPs(r.RemoteAddr, true) {
+		http.Error(w, "Access Denied: Local Connections Only", http.StatusForbidden)
+		log.Printf("Settings: Failed attempt to access by address: %s\n", r.RemoteAddr)
+		return
+	}
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	log.Printf("Setting change request from: %s\n", r.RemoteAddr)
+
+	var newSettings map[string]any
 	if err := json.NewDecoder(r.Body).Decode(&newSettings); err != nil {
 		http.Error(w, "An error occured while changing settings", http.StatusBadRequest)
 		log.Println("JSON Decoding Error: ", err)

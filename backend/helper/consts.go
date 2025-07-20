@@ -1,19 +1,37 @@
 package helper
 
 const (
+	// Root for api
 	ApiPath string = "/api"
 
-	HelpCommand     = "/help"
-	ListCommand     = "/list"
-	UploadCommand   = "/upload"
-	DownloadCommand = "/download"
-	DeleteCommand   = "/delete"
+	// Commands
+	// HelpCommand     = "/help"
+	listCommand     = "/list"
+	uploadCommand   = "/upload"
+	downloadCommand = "/download"
+	deleteCommand   = "/delete"
 
-	SettingsCommand = "/settings"
+	settingsCommand = "/settings"
+	updateCommand   = "/update"
+	allowCommand    = "/allow"
+
 	WsNotifyCommand = "/ws"
 
+	// WS labels
 	FSLabel       = "Resource Folder"
 	SettingsLabel = "Settings"
+
+	// URLS
+	ListFilesURL    = ApiPath + listCommand
+	UploadFileURL   = ApiPath + uploadCommand
+	DownloadFileURL = ApiPath + downloadCommand
+	DeleteFileURL   = ApiPath + deleteCommand
+
+	ListSettingsURL    = ApiPath + settingsCommand + listCommand
+	UpdateSettingsURL  = ApiPath + settingsCommand + updateCommand
+	AllowIPSettingsURL = ApiPath + settingsCommand + allowCommand
+
+	WebSocketURL = ApiPath + WsNotifyCommand
 )
 
 var (
@@ -33,4 +51,8 @@ type FileInfo struct {
 	Name string `json:"name"`
 	Size string `json:"size"`
 	Mime string `json:"mime"`
+}
+
+type IpJSON struct {
+	IP string `json:"ip"`
 }
