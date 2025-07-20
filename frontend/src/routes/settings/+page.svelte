@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
+	import { goto } from '$app/navigation';
 
 	import { SettingDescriptions } from '$lib/utils/consts';
 	import { ConnectSocket } from '$lib/api/ws';
 	import BoolSwitch from './BoolSwitch.svelte';
+	import { loggedIn, storeAfterLogin } from '$lib/stores/session';
 
 	let currentSettings: Record<string, any> = {};
 
@@ -18,9 +20,18 @@
 
 	// Connect to websocket (refreshfunc is already runned once on ws open)
 	onMount(() => {
+		const unsub = loggedIn.subscribe((value) => {
+			if (!value) {
+				sessionStorage.setItem(storeAfterLogin, window.location.pathname);
+				goto('/login');
+			}
+		});
+
 		setTimeout(() => {
 			socket = ConnectSocket(() => selfClose, refreshSettings, setRefreshTimeout);
 		}, 0);
+
+		return unsub();
 	});
 
 	// Close ws
@@ -49,8 +60,7 @@
 </svelte:head>
 
 <div>
-	<h1 class="m-10 text-2xl font-bold">Settings</h1>
-
+	<h1 class="m-10">Settings</h1>
 	<div class="mx-auto w-full max-w-2xl space-y-6">
 		{#each SettingDescriptions as setting}
 			<div class="flex items-center justify-between gap-4 text-left">
@@ -61,7 +71,7 @@
 				{#if typeof currentSettings[setting.jsonKey] === 'boolean'}
 					<BoolSwitch {setting} json_record={currentSettings} />
 				{:else}
-					<p>Unfortunately, currently there is no config provided for this setting.</p>
+					<p>Setting for this is currently unavailable.</p>
 				{/if}
 			</div>
 		{/each}

@@ -23,8 +23,6 @@
 	}
 
 	onMount(() => {
-		InitialLoadFiles();
-
 		// Websocket to refresh (settimeout for running after call stack / main tasks)
 		setTimeout(() => {
 			socket = ConnectSocket(() => selfClose, refreshFileList, setRefreshTimeout);
@@ -69,28 +67,13 @@
 
 	async function refreshFileList(): Promise<void> {
 		try {
-			const newAllFiles = await apiListFiles();
-			allFiles = newAllFiles;
-			filteredFiles = filterFilesFuzzy(searchText, allFiles);
+			allFiles = await apiListFiles();
 		} catch (error) {
 			toast.error('Could not refresh file list. Try reloading the page.');
 			console.log('Error: ', error);
-			return;
-		}
-	}
-
-	async function InitialLoadFiles() {
-		try {
-			allFiles = await toast.promise(apiListFiles(), {
-				loading: 'Loading files...',
-				success: 'Files loaded successfully!',
-				error: 'Error: Could not load files.'
-			});
-		} catch (error) {
 			allFiles = [];
-			console.error(error);
 		}
-		filteredFiles = allFiles;
+		filteredFiles = filterFilesFuzzy(searchText, allFiles);
 	}
 </script>
 
