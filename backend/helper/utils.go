@@ -1,6 +1,7 @@
 package helper
 
 import (
+	"crypto/sha512"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -15,6 +16,7 @@ import (
 	"sync"
 
 	"github.com/joho/godotenv"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func ImportEnvs() {
@@ -38,6 +40,13 @@ func ImportEnvs() {
 	} else {
 		FrontendPort = newFPort
 	}
+
+	sum := sha512.Sum512([]byte(os.Getenv("PASSWORD")))
+	newPassword, err := bcrypt.GenerateFromPassword(sum[:], 0)
+	if err != nil {
+		log.Println(err)
+	}
+	Password = newPassword
 
 	newResourcePath := os.Getenv("UPLOADS_FOLDER")
 	if newResourcePath == "" {

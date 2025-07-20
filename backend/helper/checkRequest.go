@@ -9,9 +9,8 @@ import (
 	"strings"
 )
 
-func FromInvalidIPs(addr string, important bool) bool {
-	if !strings.Contains(addr, ":") { addr += ":1"; }
-
+func FromInvalidIPs(addr string, localConnectionsOnly bool) bool {
+	if !strings.Contains(addr, ":") { addr += ":1234"; } // add dummy port if not in format x.x.x.x:x
 	host, _, err := net.SplitHostPort(addr)
 	if err != nil {
 		fmt.Println("log: ERROR", err)
@@ -22,7 +21,7 @@ func FromInvalidIPs(addr string, important bool) bool {
 		return false
 	}
 	
-	if important { // Stuff like settings should be only editable by the host machine 
+	if localConnectionsOnly { // Stuff like settings should be only editable by the host machine 
 		return true
 	}
 	
@@ -56,12 +55,12 @@ func IsInvalidFileName(fileName string, safeFileName string) bool {
 
 func WithCORS(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if !FromInvalidIPs(r.RemoteAddr, true) {
-			w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
-			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-			w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-			w.Header().Set("Access-Control-Allow-Credentials", "true")
-		}
+		// if !FromInvalidIPs(r.RemoteAddr, true) {
+		w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
+		// }
 
 		if r.Method == http.MethodOptions {
 			w.WriteHeader(http.StatusNoContent)

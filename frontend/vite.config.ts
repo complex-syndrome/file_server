@@ -9,6 +9,6 @@ export default defineConfig(({ mode }) => {
 			'import.meta.env.VITE_WS_URL': JSON.stringify(env.VITE_WS_URL),
 			'import.meta.env.VITE_API_URL': JSON.stringify(env.VITE_API_URL)
 		},
-		plugins: [tailwindcss(), sveltekit()]
-	};
+		plugins: [tailwindcss(), sveltekit()],
+	};	
 });

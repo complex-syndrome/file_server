@@ -24,13 +24,13 @@ func main() {
 	fmt.Println("Max upload size: " + helper.CalculateSize(helper.MaxUploadSize))
 
 	// Handlers
+	http.HandleFunc(helper.LoginURL, handlers.LoginHandler)
 	http.HandleFunc(helper.ListFilesURL, handlers.ListFilesHandler)
 	http.HandleFunc(helper.UploadFileURL, handlers.UploadFileHandler)
 	http.HandleFunc(helper.DownloadFileURL, handlers.DownloadFileHandler)
 	http.HandleFunc(helper.DeleteFileURL, handlers.DeleteFileHandler)
 	http.HandleFunc(helper.ListSettingsURL, handlers.ListSettingsHandler)
 	http.HandleFunc(helper.UpdateSettingsURL, handlers.EditSettingsHandler)
-	http.HandleFunc(helper.AllowIPSettingsURL, handlers.AllowIPSettingsHandler)
 
 	// Fsnotify + Websocket
 	fanOut := &helper.FanOut{}
@@ -47,5 +47,6 @@ func main() {
 	log.Printf("Backend server started at http://%s:%d%s\n", helper.GetMyIP().String(), helper.BackendPort, helper.ApiPath)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", helper.BackendPort), helper.WithCORS(http.DefaultServeMux)))
 
+	// TODO Phone can't access, try
 	<-make(chan struct{})
 }

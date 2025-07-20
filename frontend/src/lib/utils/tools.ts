@@ -1,4 +1,5 @@
 import type { FileInfo } from '$lib/utils/interfaces';
+import { tips } from './consts';
 
 // Partial fuzzy
 export function filterFilesFuzzy(text: string, fileArray: FileInfo[]): FileInfo[] {
@@ -10,4 +11,8 @@ export function filterFilesFuzzy(text: string, fileArray: FileInfo[]): FileInfo[
 	const regexPattern = '.*' + escaped.replace(/\s+/g, '.*') + '.*';
 	const regex = new RegExp(regexPattern, 'i');
 	return fileArray.filter((file) => regex.test(file.name));
+}
+
+export function randomTips(): string {
+	return tips[Math.floor(Math.random() * tips.length)];
 }

@@ -59,21 +59,23 @@
 	<meta name="description" content="Access files with urls!" />
 </svelte:head>
 
-<div>
-	<h1 class="m-10">Settings</h1>
-	<div class="mx-auto w-full max-w-2xl space-y-6">
-		{#each SettingDescriptions as setting}
-			<div class="flex items-center justify-between gap-4 text-left">
-				<div class="flex-grow">
-					<h2 class="text-lg font-bold text-gray-800">{setting.title}</h2>
-					<p class="text-md text-gray-500">{setting.description}</p>
+{#if $loggedIn}
+	<div>
+		<h1 class="m-10">Settings</h1>
+		<div class="mx-auto w-full max-w-2xl space-y-6">
+			{#each SettingDescriptions as setting}
+				<div class="flex items-center justify-between gap-4 text-left">
+					<div class="flex-grow">
+						<h2 class="text-lg font-bold text-gray-800">{setting.title}</h2>
+						<p class="text-md text-gray-500">{setting.description}</p>
+					</div>
+					{#if typeof currentSettings[setting.jsonKey] === 'boolean'}
+						<BoolSwitch {setting} json_record={currentSettings} />
+					{:else}
+						<p>Setting for this is currently unavailable.</p>
+					{/if}
 				</div>
-				{#if typeof currentSettings[setting.jsonKey] === 'boolean'}
-					<BoolSwitch {setting} json_record={currentSettings} />
-				{:else}
-					<p>Setting for this is currently unavailable.</p>
-				{/if}
-			</div>
-		{/each}
+			{/each}
+		</div>
 	</div>
-</div>
+{/if}

@@ -10,34 +10,6 @@ import (
 	"github.com/complex-syndrome/file-server/backend/helper"
 )
 
-func AllowIPSettingsHandler(w http.ResponseWriter, r *http.Request) {
-	if helper.FromInvalidIPs(r.RemoteAddr, true) {
-		http.Error(w, "Access Denied: Local Connections Only", http.StatusForbidden)
-		log.Printf("Settings: Failed attempt to access by address: %s\n", r.RemoteAddr)
-		return
-	}
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not Allowed", http.StatusMethodNotAllowed)
-		return
-	}
-	log.Printf("Setting verify request from: %s\n", r.RemoteAddr)
-
-	var req helper.IpJSON
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "An error occured while decoding JSON", http.StatusBadRequest)
-		log.Println("JSON Decoding Error: ", err)
-		return
-	}
-
-	if helper.FromInvalidIPs(req.IP, true) { // dummy port
-		log.Println("Rejected invalid IP:", req.IP)
-		http.Error(w, "IP Not allowed", http.StatusMethodNotAllowed)
-	} else {
-		log.Println("Allowed valid IP:", req.IP)
-		fmt.Fprintln(w, "IP allowed")
-	}
-}
-
 func ListSettingsHandler(w http.ResponseWriter, r *http.Request) {
 	if helper.FromInvalidIPs(r.RemoteAddr, true) {
 		http.Error(w, "Access Denied: Local Connections Only", http.StatusForbidden)

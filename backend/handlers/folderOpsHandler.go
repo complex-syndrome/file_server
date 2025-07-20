@@ -17,7 +17,7 @@ func ListFilesHandler(w http.ResponseWriter, r *http.Request) {
 	// Ensure local access only (or setted otherwise)
 	if helper.FromInvalidIPs(r.RemoteAddr, false) {
 		http.Error(w, "Access Denied: Local Connections Only", http.StatusForbidden)
-		log.Printf("Failed attempt to access by address: %s\n", r.RemoteAddr)
+		log.Printf("Folder Ops: Failed attempt to access by address: %s\n", r.RemoteAddr)
 		return
 	}
 
@@ -78,7 +78,7 @@ func UploadFileHandler(w http.ResponseWriter, r *http.Request) {
 	// Ensure local access only (or setted otherwise)
 	if helper.FromInvalidIPs(r.RemoteAddr, false) {
 		http.Error(w, "Access Denied: Local Connections Only", http.StatusForbidden)
-		log.Printf("Failed attempt to access by address: %s\n", r.RemoteAddr)
+		log.Printf("Folder Ops: Failed attempt to access by address: %s\n", r.RemoteAddr)
 		return
 	}
 
@@ -147,7 +147,7 @@ func DownloadFileHandler(w http.ResponseWriter, r *http.Request) {
 	// Ensure local access only (or setted otherwise)
 	if helper.FromInvalidIPs(r.RemoteAddr, false) {
 		http.Error(w, "Access Denied: Local Connections Only", http.StatusForbidden)
-		log.Printf("Failed attempt to access by address: %s\n", r.RemoteAddr)
+		log.Printf("Folder Ops: Failed attempt to access by address: %s\n", r.RemoteAddr)
 		return
 	}
 
@@ -189,7 +189,7 @@ func DeleteFileHandler(w http.ResponseWriter, r *http.Request) {
 	// Ensure local access only (or setted otherwise)
 	if helper.FromInvalidIPs(r.RemoteAddr, false) {
 		http.Error(w, "Access Denied: Local Connections Only", http.StatusForbidden)
-		log.Printf("Failed attempt to access by address: %s\n", r.RemoteAddr)
+		log.Printf("Folder Ops: Failed attempt to access by address: %s\n", r.RemoteAddr)
 		return
 	}
 

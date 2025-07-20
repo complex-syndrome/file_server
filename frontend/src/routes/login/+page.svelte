@@ -4,8 +4,9 @@
 	import { CircleAlert, OctagonX } from '@lucide/svelte';
 
 	import { loggedIn, storeAfterLogin, login } from '$lib/stores/session';
-	import { preventDefault } from 'svelte/legacy';
+	import { randomTips } from '$lib/utils/tools';
 
+	let tip = randomTips();
 	let password: string;
 	let loginAttempted: boolean = false;
 	let shake: boolean = false;
@@ -57,7 +58,7 @@
 				class="w-full min-w-[200px] flex-grow rounded-xl border border-gray-300 p-4 align-middle shadow-md focus:ring-gray-300 sm:w-auto"
 			/>
 			<button
-				onclick={() => tryLogin(password)}
+				type="submit"
 				class="mb-4 flex w-full flex-grow items-center justify-center gap-2 rounded-xl border-2 border-orange-500 p-4 text-orange-500 transition hover:cursor-pointer
             hover:bg-orange-500 hover:text-white sm:mb-0
             sm:w-auto sm:max-w-[25%]"
@@ -74,7 +75,7 @@
 	{/if}
 
 	<p class="flex gap-2 text-orange-500">
-		<CircleAlert />Tips: Login is refreshed after reloading the page.
+		<CircleAlert />Tips: {tip}
 	</p>
 </div>
 

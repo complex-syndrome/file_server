@@ -8,3 +8,11 @@ export const SettingDescriptions: SettingType[] = [
 		jsonKey: 'AllowOtherIPs'
 	}
 ];
+
+export const tips: string[] = [
+	'Login is refreshed after reloading the page.',
+	'To refresh the password, run the backend / whole program again after changing .env',
+	'Changes to the uploaded files and settings are refreshed immediately.',
+	'Use strong passwords!',
+	'You can paste files using CTRL+V to upload them!'
+];

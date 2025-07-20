@@ -88,7 +88,7 @@
 	/>
 
 	<!-- Search and upload -->
-	<div class="flex flex-wrap items-center gap-2 sm:m-4">
+	<div class="flex flex-wrap items-center gap-2 sm:m-4 sm:mb-8">
 		<input
 			class="w-full min-w-[200px] flex-grow rounded-xl border border-gray-300 p-4 align-middle focus:border-orange-500
         focus:ring-orange-500 sm:w-auto"
@@ -117,7 +117,7 @@
 		<ul>
 			{#each filteredFiles as file}
 				<li
-					class="m-4 mt-0 flex flex-col gap-4 rounded-xl border-2 border-neutral-200 p-4 shadow-xl hover:border-orange-500 sm:m-8 sm:flex-row sm:items-center"
+					class="m-4 mt-0 flex flex-col gap-4 rounded-xl border-2 border-neutral-200 p-4 shadow-xl hover:border-orange-500 sm:m-4 sm:flex-row sm:items-center"
 				>
 					<div class="flex w-full min-w-0 flex-grow flex-col gap-1 p-4 sm:w-auto">
 						<p class="max-w-full truncate font-semibold text-gray-800">{file.name}</p>

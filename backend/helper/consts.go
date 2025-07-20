@@ -13,7 +13,7 @@ const (
 
 	settingsCommand = "/settings"
 	updateCommand   = "/update"
-	allowCommand    = "/allow"
+	loginCommand    = "/login"
 
 	WsNotifyCommand = "/ws"
 
@@ -22,14 +22,15 @@ const (
 	SettingsLabel = "Settings"
 
 	// URLS
+	LoginURL = ApiPath + loginCommand
+
 	ListFilesURL    = ApiPath + listCommand
 	UploadFileURL   = ApiPath + uploadCommand
 	DownloadFileURL = ApiPath + downloadCommand
 	DeleteFileURL   = ApiPath + deleteCommand
 
-	ListSettingsURL    = ApiPath + settingsCommand + listCommand
-	UpdateSettingsURL  = ApiPath + settingsCommand + updateCommand
-	AllowIPSettingsURL = ApiPath + settingsCommand + allowCommand
+	ListSettingsURL   = ApiPath + settingsCommand + listCommand
+	UpdateSettingsURL = ApiPath + settingsCommand + updateCommand
 
 	WebSocketURL = ApiPath + WsNotifyCommand
 )
@@ -40,6 +41,7 @@ var (
 	BackendPort   uint64 = 8080
 	FrontendPort  uint64 = 5173
 	MaxUploadSize int64  = TranslateSize("5GB")
+	Password      []byte
 
 	defaultSettings = map[string]any{
 		"AllowOtherIPs": false,
@@ -53,6 +55,4 @@ type FileInfo struct {
 	Mime string `json:"mime"`
 }
 
-type IpJSON struct {
-	IP string `json:"ip"`
-}
+
