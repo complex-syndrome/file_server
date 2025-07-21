@@ -32,7 +32,7 @@ const (
 	ListSettingsURL   = ApiPath + settingsCommand + listCommand
 	UpdateSettingsURL = ApiPath + settingsCommand + updateCommand
 
-	WebSocketURL = ApiPath + WsNotifyCommand
+	WebSocketURL = WsNotifyCommand
 )
 
 var (

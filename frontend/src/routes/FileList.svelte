@@ -5,8 +5,13 @@
 	import { Trash2, DownloadCloud, FileUp } from '@lucide/svelte';
 
 	import type { FileInfo } from '$lib/utils/interfaces';
-	import { apiListFiles, apiDownloadFile, apiDeleteFile, apiUploadFile } from '$lib/api/files';
-	import { ConnectSocket } from '$lib/api/ws';
+	import {
+		apiListFiles,
+		apiDownloadFile,
+		apiDeleteFile,
+		apiUploadFile
+	} from '$lib/connectAPI/files';
+	import { ConnectSocket } from '$lib/connectAPI/ws';
 	import { filterFilesFuzzy } from '$lib/utils/tools';
 
 	let allFiles: FileInfo[] = [];
@@ -70,7 +75,6 @@
 			allFiles = await apiListFiles();
 		} catch (error) {
 			toast.error('Could not refresh file list. Try reloading the page.');
-			console.log('Error: ', error);
 			allFiles = [];
 		}
 		filteredFiles = filterFilesFuzzy(searchText, allFiles);

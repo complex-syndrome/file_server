@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { SettingType } from '$lib/utils/interfaces';
 	import { Check, X } from '@lucide/svelte';
-	import { updateSettings } from '$lib/api/settings';
+	import { updateSettings } from '$lib/connectAPI/settings';
 	import toast from 'svelte-french-toast';
 
 	export let json_record: Record<string, any>;

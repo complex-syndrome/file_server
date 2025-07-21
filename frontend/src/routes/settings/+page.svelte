@@ -3,7 +3,7 @@
 	import { goto } from '$app/navigation';
 
 	import { SettingDescriptions } from '$lib/utils/consts';
-	import { ConnectSocket } from '$lib/api/ws';
+	import { ConnectSocket } from '$lib/connectAPI/ws';
 	import BoolSwitch from './BoolSwitch.svelte';
 	import { loggedIn, storeAfterLogin } from '$lib/stores/session';
 
@@ -24,13 +24,12 @@
 			if (!value) {
 				sessionStorage.setItem(storeAfterLogin, window.location.pathname);
 				goto('/login');
+			} else {
+				setTimeout(() => {
+					socket = ConnectSocket(() => selfClose, refreshSettings, setRefreshTimeout);
+				}, 0);
 			}
 		});
-
-		setTimeout(() => {
-			socket = ConnectSocket(() => selfClose, refreshSettings, setRefreshTimeout);
-		}, 0);
-
 		return unsub();
 	});
 
@@ -45,7 +44,7 @@
 
 	async function refreshSettings(): Promise<any> {
 		try {
-			const res = await fetch(`${import.meta.env.VITE_API_URL}/settings/list`);
+			const res = await fetch(`api/settings/list`);
 			currentSettings = await res.json();
 		} catch (error) {
 			console.error(error);

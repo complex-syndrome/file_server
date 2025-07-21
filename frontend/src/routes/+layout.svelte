@@ -21,7 +21,7 @@
 	<Toaster
 		position="bottom-right"
 		toastOptions={{
-			className: 'p-8 shadow-4xl text-lg rounded-xl'
+			className: 'p-8 sm:p-4 shadow-4xl text-md rounded-xl'
 		}}
 	/>
 

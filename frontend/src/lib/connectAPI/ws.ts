@@ -3,7 +3,7 @@ export function ConnectSocket(
 	refreshFunction: () => void,
 	setTimeoutRef: (v: ReturnType<typeof setTimeout> | null) => void
 ): WebSocket {
-	const socket = new WebSocket(import.meta.env.VITE_WS_URL);
+	const socket = new WebSocket(`/ws`);
 
 	socket.onopen = () => {
 		console.log('WebSocket connection established.');
