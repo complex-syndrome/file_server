@@ -155,15 +155,15 @@ func DownloadFileHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	log.Printf("Download request from: %s\n", r.RemoteAddr)
-
+	
 	// Empty
 	fileName := r.URL.Query().Get("file")
 	if fileName == "" {
 		http.Error(w, "Url missing 'file' parameter", http.StatusBadRequest)
 		return
 	}
-
+	
+	log.Printf("Download request from: %s\n", r.RemoteAddr)
 	// Safe
 	safeFileName := filepath.Base(fileName)
 	if fileName != safeFileName || helper.IsInvalidFileName(fileName, safeFileName) {
@@ -182,7 +182,7 @@ func DownloadFileHandler(w http.ResponseWriter, r *http.Request) {
 
 	http.ServeFile(w, r, fmt.Sprintf("%s/%s", helper.ResourcePath, fileName))
 	fmt.Fprintf(w, "Download successful: %s\n", fileName)
-	log.Printf("Downloaded file (%s) by %s\n", fileName, r.RemoteAddr)
+	log.Printf("Successful download request from: %s (%s)\n", fileName, r.RemoteAddr)
 }
 
 func DeleteFileHandler(w http.ResponseWriter, r *http.Request) {
@@ -198,15 +198,15 @@ func DeleteFileHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	log.Printf("Delete request from: %s\n", r.RemoteAddr)
-
+	
 	// Empty
 	fileName := r.URL.Query().Get("file")
 	if fileName == "" {
 		http.Error(w, "Url missing 'file' parameter", http.StatusBadRequest)
 		return
 	}
-
+	
+	log.Printf("Delete request from: %s\n", r.RemoteAddr)
 	// Safe
 	safeFileName := filepath.Base(fileName)
 	if helper.IsInvalidFileName(fileName, safeFileName) {
@@ -231,5 +231,5 @@ func DeleteFileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Fprintf(w, "Deleted successfully: %s\n", fileName)
-	log.Printf("Deleted file (%s) by %s\n", fileName, r.RemoteAddr)
+	log.Printf("Successful delete request from: %s (%s)\n", fileName, r.RemoteAddr)
 }

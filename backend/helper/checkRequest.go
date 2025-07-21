@@ -21,7 +21,7 @@ func FromInvalidIPs(addr string, localConnectionsOnly bool) bool {
 		return false
 	}
 	
-	if localConnectionsOnly { // Stuff like settings should be only editable by the host machine 
+	if localConnectionsOnly { // Enforce restriction to localhost only (e.g., for settings endpoints)
 		return true
 	}
 	
@@ -31,12 +31,12 @@ func FromInvalidIPs(addr string, localConnectionsOnly bool) bool {
 			return !AllowOtherIPs
 			
 		} else {
-			log.Println("Unable to get current settings.")
+			log.Println("AllowOtherIPs is not a boolean.")
 			return true
 		}
 		
 	} else {
-		log.Println("AllowOtherIPs is not a boolean.")
+		log.Println("Unable to get current settings.")
 		return true
 	}
 }
@@ -55,12 +55,25 @@ func IsInvalidFileName(fileName string, safeFileName string) bool {
 
 func WithCORS(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// if !FromInvalidIPs(r.RemoteAddr, true) {
-		w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-		w.Header().Set("Access-Control-Allow-Credentials", "true")
-		// }
+		val, ok := GetCurrentSettings("AllowOtherIPs")
+		
+		if !ok {
+			log.Println("AllowOtherIPs is not a boolean.")
+			return
+		}
+
+		AllowOtherIPs, ok := val.(bool)
+		if !ok {
+			log.Println("Unable to get current settings.")	
+			return
+		}
+
+		if !FromInvalidIPs(r.RemoteAddr, false) || AllowOtherIPs { // If localhost, proxy / webUI
+			w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
+			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+			w.Header().Set("Access-Control-Allow-Credentials", "true")
+		}
 
 		if r.Method == http.MethodOptions {
 			w.WriteHeader(http.StatusNoContent)
