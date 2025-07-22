@@ -21,7 +21,7 @@ echo Backend build completed.
 
 rm -rf frontend/build
 pushd frontend
-bun run build
+bun install && bun run build
 popd
 echo Frontend build completed.
 

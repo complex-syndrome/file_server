@@ -23,14 +23,14 @@ var (
 func FSChangeWebsocket(nchan <-chan string, w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println("Upgrade Error:", err)
+		log.Println("WS Upgrade Error:", err)
 		return
 	}
 	defer conn.Close()
 
 	// register client
 	mutex.Lock()
-	log.Println("Client", r.RemoteAddr, "connected.")
+	log.Println("WS: Client", r.RemoteAddr, "connected.")
 	clients[conn] = true
 	mutex.Unlock()
 
@@ -62,7 +62,7 @@ func Broadcaster(nchan <-chan string) {
 				conn.Close()
 				delete(clients, conn)
 			} else {
-				log.Printf("Sent message to client: %s", msg)
+				log.Printf("WS sent message to client: %s", msg)
 			}
 		}
 		mutex.Unlock()
@@ -87,14 +87,14 @@ func WatchFiles(publish func(msg string), path string, label string) { // chan<-
 			if !ok {
 				return
 			}
-			log.Println("Watch Event:", event)
+			log.Println("FS Watch Event:", event)
 			publish(label + ": " + event.String())
 
 		case err, ok := <-watcher.Errors:
 			if !ok {
 				return
 			}
-			log.Println("Watch Error:", err)
+			log.Println("FS Watch Error:", err)
 		}
 	}
 }

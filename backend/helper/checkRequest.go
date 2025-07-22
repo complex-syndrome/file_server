@@ -1,7 +1,6 @@
 package helper
 
 import (
-	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -19,13 +18,6 @@ func FromLocalhost(host string) bool {
 }
 
 func ValidRequest(r *http.Request, important bool) bool {
-	fmt.Println("AllowOtherIPs:", GetCurrentSettings("AllowOtherIPs"))
-	fmt.Println("IsFrontendRequest:", IsFrontendRequest(r))
-
-	head := r.Header.Get("X-Forwarded-For")
-	fmt.Println("X-Forwarded-For:", head)
-	fmt.Println("FromLocalhost:", FromLocalhost(head))
-
 	AllowOtherIPs, ok := GetCurrentSettings("AllowOtherIPs").(bool)
 	if !ok {
 		log.Println("Unable to get current settings.")

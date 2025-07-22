@@ -9,7 +9,7 @@ echo Backend build completed.
 
 rmdir /s /q "frontend/build" > NUL 2>&1
 pushd frontend
-bun run build
+bun install && bun run build
 popd
 echo Frontend build completed.
 

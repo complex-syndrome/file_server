@@ -26,7 +26,7 @@ func ListFilesHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	log.Printf("List request from %s\n", r.RemoteAddr)
+	log.Printf("List file request from %s\n", r.RemoteAddr)
 
 	// Read folder
 	files, err := os.ReadDir(helper.ResourcePath)

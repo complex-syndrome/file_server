@@ -39,12 +39,12 @@ var (
 	ResourcePath  string = "../uploads"
 	SettingsPath  string = "../settings.json"
 	BackendPort   uint64 = 8080
-	FrontendPort  uint64 = 5173
+	FrontendPort  uint64 = 4173
 	MaxUploadSize int64  = TranslateSize("5GB")
 	Password      []byte
 
 	defaultSettings = map[string]any{
-		"AllowOtherIPs": false,
+		"AllowOtherIPs": true,
 	}
 	CurrentSettings map[string]any
 )

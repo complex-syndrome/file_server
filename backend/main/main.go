@@ -19,9 +19,9 @@ func main() {
 	helper.RefreshSettings()
 
 	// Log
-	fmt.Println("Upload Path: " + helper.ResourcePath)
-	fmt.Println("Settings Path: " + helper.SettingsPath)
-	fmt.Println("Max upload size: " + helper.CalculateSize(helper.MaxUploadSize))
+	log.Println("Upload Path: " + helper.ResourcePath)
+	log.Println("Settings Path: " + helper.SettingsPath)
+	log.Println("Max upload size: " + helper.CalculateSize(helper.MaxUploadSize))
 
 	// Handlers
 	http.HandleFunc(helper.LoginURL, handlers.LoginHandler)

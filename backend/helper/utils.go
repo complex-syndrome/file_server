@@ -91,7 +91,6 @@ func GetMyIP() net.IP {
 }
 
 func TryMkdir(path string) {
-	log.Println("Path:", path)
 	if err := os.MkdirAll(path, 0777); err != nil {
 		log.Fatalf("Could not create directory: %v", err)
 	}
