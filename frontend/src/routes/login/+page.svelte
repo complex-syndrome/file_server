@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 
-	import { CircleAlert, OctagonX } from '@lucide/svelte';
+	import { CircleAlert, OctagonX, Eye, EyeClosed } from '@lucide/svelte';
 
 	import { loggedIn, storeAfterLogin, login } from '$lib/stores/session';
 	import { randomTips } from '$lib/utils/tools';
@@ -10,6 +10,7 @@
 	let password: string;
 	let loginAttempted: boolean = false;
 	let shake: boolean = false;
+	let showPassword: boolean = false;
 
 	$: if ($loggedIn) {
 		// Success: Go back
@@ -33,6 +34,10 @@
 			loginAttempted = false;
 		}
 	}
+
+	function toggleShowPassword() {
+		showPassword = !showPassword;
+	}
 </script>
 
 <svelte:head>
@@ -43,40 +48,54 @@
 <div>
 	<h1 class="m-10">Please Login Before Continuing</h1>
 
-	<div class="mb-4">
+	<div class="mb-4 justify-center">
 		<form
-			class="flex flex-wrap items-center gap-2"
+			class="mb-4 flex flex-wrap gap-2"
 			onsubmit={(e) => {
 				e.preventDefault();
 				tryLogin(password);
 			}}
 		>
-			<input
-				type="password"
-				bind:value={password}
-				placeholder="Password"
-				class="w-full min-w-[200px] flex-grow rounded-xl border border-gray-300 p-4 align-middle shadow-md focus:ring-gray-300 sm:w-auto"
-			/>
+			<div class="relative w-full max-w-2xl">
+				<input
+					type={showPassword ? 'text' : 'password'}
+					bind:value={password}
+					placeholder="Password"
+					class="w-full flex-grow rounded-xl border border-gray-300 p-4 pr-12 align-middle shadow-md focus:ring-gray-300"
+				/>
+				<button
+					type="button"
+					onclick={toggleShowPassword}
+					class="absolute top-1/2 right-3 -translate-y-1/2 rounded-full p-2 transition hover:bg-gray-100 active:bg-gray-200"
+					aria-label="Toggle password visibility"
+				>
+					{#if showPassword}
+						<Eye class="h-5 w-5 text-gray-600" />
+					{:else}
+						<EyeClosed class="h-5 w-5 text-gray-600" />
+					{/if}
+				</button>
+			</div>
 			<button
 				type="submit"
-				class="mb-4 flex w-full flex-grow items-center justify-center gap-2 rounded-xl border-2 border-orange-500 p-4 text-orange-500 transition hover:cursor-pointer
+				class="flex w-full flex-grow items-center justify-center gap-2 rounded-xl border-2 border-orange-500 p-4 text-orange-500 transition hover:cursor-pointer
             hover:bg-orange-500 hover:text-white sm:mb-0
             sm:w-auto sm:max-w-[25%]"
 			>
 				Confirm
 			</button>
 		</form>
-	</div>
 
-	{#if loginAttempted}
-		<p class="mb-4 flex gap-2 text-red-500 {shake ? 'shake' : ''}">
-			<OctagonX />Password incorrect. Please try again.
+		{#if loginAttempted}
+			<p class="mb-4 flex gap-2 text-red-500 {shake ? 'shake' : ''}">
+				<OctagonX />Password incorrect. Please try again.
+			</p>
+		{/if}
+
+		<p class="flex gap-2 text-orange-500">
+			<CircleAlert />Tips: {tip}
 		</p>
-	{/if}
-
-	<p class="flex gap-2 text-orange-500">
-		<CircleAlert />Tips: {tip}
-	</p>
+	</div>
 </div>
 
 <style>

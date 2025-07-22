@@ -8,8 +8,6 @@ import (
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/gorilla/websocket"
-
-	"github.com/complex-syndrome/file-server/backend/helper"
 )
 
 var (
@@ -23,12 +21,6 @@ var (
 )
 
 func FSChangeWebsocket(nchan <-chan string, w http.ResponseWriter, r *http.Request) {
-	if helper.FromInvalidIPs(r.RemoteAddr, true) {
-		http.Error(w, "Access Denied: Local Connections Only", http.StatusForbidden)
-		log.Printf("Settings: Failed attempt to access by address: %s\n", r.RemoteAddr)
-		return
-	}
-
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println("Upgrade Error:", err)

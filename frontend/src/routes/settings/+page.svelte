@@ -6,6 +6,7 @@
 	import { ConnectSocket } from '$lib/connectAPI/ws';
 	import BoolSwitch from './BoolSwitch.svelte';
 	import { loggedIn, storeAfterLogin } from '$lib/stores/session';
+	import { customFetch } from '$lib/utils/tools';
 
 	let currentSettings: Record<string, any> = {};
 
@@ -44,7 +45,7 @@
 
 	async function refreshSettings(): Promise<any> {
 		try {
-			const res = await fetch(`api/settings/list`);
+			const res = await customFetch(`api/settings/list`);
 			currentSettings = await res.json();
 		} catch (error) {
 			console.error(error);

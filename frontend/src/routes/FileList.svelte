@@ -74,7 +74,7 @@
 		try {
 			allFiles = await apiListFiles();
 		} catch (error) {
-			toast.error('Could not refresh file list. Try reloading the page.');
+			toast.error('Could not refresh file list.');
 			allFiles = [];
 		}
 		filteredFiles = filterFilesFuzzy(searchText, allFiles);

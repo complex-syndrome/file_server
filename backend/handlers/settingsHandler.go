@@ -11,9 +11,9 @@ import (
 )
 
 func ListSettingsHandler(w http.ResponseWriter, r *http.Request) {
-	if helper.FromInvalidIPs(r.RemoteAddr, true) {
+	if !helper.ValidRequest(r, true) {
 		http.Error(w, "Access Denied: Local Connections Only", http.StatusForbidden)
-		log.Printf("Settings: Failed attempt to access by address: %s\n", r.RemoteAddr)
+		log.Printf("List Settings: Failed attempt to access by address: %s\n", r.RemoteAddr)
 		return
 	}
 	if r.Method != http.MethodGet {
@@ -26,9 +26,9 @@ func ListSettingsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func EditSettingsHandler(w http.ResponseWriter, r *http.Request) {
-	if helper.FromInvalidIPs(r.RemoteAddr, true) {
+	if !helper.ValidRequest(r, true) {
 		http.Error(w, "Access Denied: Local Connections Only", http.StatusForbidden)
-		log.Printf("Settings: Failed attempt to access by address: %s\n", r.RemoteAddr)
+		log.Printf("Edit Settings: Failed attempt to access by address: %s\n", r.RemoteAddr)
 		return
 	}
 	if r.Method != http.MethodPost {

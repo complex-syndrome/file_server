@@ -1,5 +1,5 @@
 import type { FileInfo } from '$lib/utils/interfaces';
-import { tips } from './consts';
+import { customHeader, tips } from './consts';
 
 // Partial fuzzy
 export function filterFilesFuzzy(text: string, fileArray: FileInfo[]): FileInfo[] {
@@ -15,4 +15,17 @@ export function filterFilesFuzzy(text: string, fileArray: FileInfo[]): FileInfo[
 
 export function randomTips(): string {
 	return tips[Math.floor(Math.random() * tips.length)];
+}
+
+export async function customFetch(
+	input: RequestInfo | URL,
+	init: RequestInit = {}
+): Promise<Response> {
+	return fetch(input, {
+		...init,
+		headers: {
+			...(init.headers || {}),
+			...customHeader
+		}
+	});
 }

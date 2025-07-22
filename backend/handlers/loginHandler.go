@@ -17,7 +17,7 @@ type PasswordJSON struct {
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	if helper.FromInvalidIPs(r.RemoteAddr, true) { // For local or from webui only
+	if !helper.ValidRequest(r, true) { // For local or from webui only
 		http.Error(w, "Access Denied: Local Connections Only", http.StatusForbidden)
 		log.Printf("Login: Failed attempt to access by address: %s\n", r.RemoteAddr)
 		return

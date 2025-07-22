@@ -7,7 +7,8 @@
 	export let json_record: Record<string, any>;
 	export let setting: SettingType;
 
-	let value: boolean = json_record[setting.jsonKey];
+	let value: boolean;
+	$: value = json_record[setting.jsonKey];
 
 	function toggleValue() {
 		json_record[setting.jsonKey] = value;
@@ -19,7 +20,7 @@
 				error: `An error occured while updating settings:`
 			});
 		} catch (error) {
-			toast.error('' + error);
+			toast.error('Settings update failed');
 		}
 	}
 </script>

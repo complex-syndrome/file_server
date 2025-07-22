@@ -43,10 +43,8 @@ func main() {
 	http.HandleFunc(helper.WebSocketURL, // Websocket handler
 		func(w http.ResponseWriter, r *http.Request) { handlers.FSChangeWebsocket(fanOut.Subscribe(), w, r) })
 
-	// Log again
+	// Log
 	log.Printf("Backend server started at http://%s:%d%s\n", helper.GetMyIP().String(), helper.BackendPort, helper.ApiPath)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", helper.BackendPort), helper.WithCORS(http.DefaultServeMux)))
-
-	// TODO Phone can't access, try
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", helper.BackendPort), nil))
 	<-make(chan struct{})
 }

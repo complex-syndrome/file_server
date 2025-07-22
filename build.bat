@@ -8,7 +8,7 @@ popd
 echo Backend build completed.
 
 rmdir /s /q "frontend/build" > NUL 2>&1
-pushd frontend 
+pushd frontend
 bun run build
 popd
 echo Frontend build completed.

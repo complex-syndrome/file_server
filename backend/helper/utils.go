@@ -183,7 +183,6 @@ func RefreshSettings() {
 	defer settingsMutex.Unlock()
 
 	CurrentSettings = ReadSettingsJSON()
-
 	log.Println()
 	log.Println("Current Settings:")
 	for k, v := range CurrentSettings {
@@ -192,9 +191,15 @@ func RefreshSettings() {
 	log.Println()
 }
 
-func GetCurrentSettings(key string) (any, bool) {
+func GetCurrentSettings(key string) any {
 	settingsMutex.RLock()
 	defer settingsMutex.RUnlock()
-	val, ok := CurrentSettings[key]
-	return val, ok
+
+	if val, ok := CurrentSettings[key]; !ok {
+		log.Println("Unable to get current setting with key:", key)
+		return nil
+
+	} else {
+		return val
+	}
 }

@@ -15,7 +15,7 @@ import (
 
 func ListFilesHandler(w http.ResponseWriter, r *http.Request) {
 	// Ensure local access only (or setted otherwise)
-	if helper.FromInvalidIPs(r.RemoteAddr, false) {
+	if !helper.ValidRequest(r, false) {
 		http.Error(w, "Access Denied: Local Connections Only", http.StatusForbidden)
 		log.Printf("Folder Ops: Failed attempt to access by address: %s\n", r.RemoteAddr)
 		return
@@ -76,7 +76,7 @@ func ListFilesHandler(w http.ResponseWriter, r *http.Request) {
 
 func UploadFileHandler(w http.ResponseWriter, r *http.Request) {
 	// Ensure local access only (or setted otherwise)
-	if helper.FromInvalidIPs(r.RemoteAddr, false) {
+	if !helper.ValidRequest(r, false) {
 		http.Error(w, "Access Denied: Local Connections Only", http.StatusForbidden)
 		log.Printf("Folder Ops: Failed attempt to access by address: %s\n", r.RemoteAddr)
 		return
@@ -145,7 +145,7 @@ func UploadFileHandler(w http.ResponseWriter, r *http.Request) {
 
 func DownloadFileHandler(w http.ResponseWriter, r *http.Request) {
 	// Ensure local access only (or setted otherwise)
-	if helper.FromInvalidIPs(r.RemoteAddr, false) {
+	if !helper.ValidRequest(r, false) {
 		http.Error(w, "Access Denied: Local Connections Only", http.StatusForbidden)
 		log.Printf("Folder Ops: Failed attempt to access by address: %s\n", r.RemoteAddr)
 		return
@@ -155,14 +155,14 @@ func DownloadFileHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	
+
 	// Empty
 	fileName := r.URL.Query().Get("file")
 	if fileName == "" {
 		http.Error(w, "Url missing 'file' parameter", http.StatusBadRequest)
 		return
 	}
-	
+
 	log.Printf("Download request from: %s\n", r.RemoteAddr)
 	// Safe
 	safeFileName := filepath.Base(fileName)
@@ -186,8 +186,8 @@ func DownloadFileHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteFileHandler(w http.ResponseWriter, r *http.Request) {
-	// Ensure local access only (or setted otherwise)
-	if helper.FromInvalidIPs(r.RemoteAddr, false) {
+	// Ensure local access only, or require password from webui
+	if !helper.ValidRequest(r, true) {
 		http.Error(w, "Access Denied: Local Connections Only", http.StatusForbidden)
 		log.Printf("Folder Ops: Failed attempt to access by address: %s\n", r.RemoteAddr)
 		return
@@ -198,14 +198,14 @@ func DeleteFileHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	
+
 	// Empty
 	fileName := r.URL.Query().Get("file")
 	if fileName == "" {
 		http.Error(w, "Url missing 'file' parameter", http.StatusBadRequest)
 		return
 	}
-	
+
 	log.Printf("Delete request from: %s\n", r.RemoteAddr)
 	// Safe
 	safeFileName := filepath.Base(fileName)

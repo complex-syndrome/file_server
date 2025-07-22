@@ -1,9 +1,10 @@
 import toast from 'svelte-french-toast';
 
 import type { FileInfo } from '$lib/utils/interfaces';
+import { customFetch } from '$lib/utils/tools';
 
 export async function apiListFiles(): Promise<FileInfo[]> {
-	const response = await fetch(`api/list`);
+	const response = await customFetch(`api/list`);
 	if (!response.ok) {
 		throw Error;
 	}
@@ -12,7 +13,7 @@ export async function apiListFiles(): Promise<FileInfo[]> {
 
 export async function apiDownloadFile(fileName: string): Promise<void> {
 	try {
-		const response = await fetch(`api/download?file=${encodeURIComponent(fileName)}`);
+		const response = await customFetch(`api/download?file=${encodeURIComponent(fileName)}`);
 		if (!response.ok) {
 			throw new Error(`Server responded with ${response.status}`);
 		}
@@ -30,7 +31,7 @@ export async function apiDownloadFile(fileName: string): Promise<void> {
 
 export async function apiDeleteFile(fileName: string) {
 	try {
-		const response = await fetch(`api/delete?file=${encodeURIComponent(fileName)}`, {
+		const response = await customFetch(`api/delete?file=${encodeURIComponent(fileName)}`, {
 			method: 'DELETE'
 		});
 		const reply = await response.text();
@@ -46,7 +47,7 @@ export async function apiUploadFile(file: File): Promise<void> {
 	formData.append('file', file);
 
 	try {
-		const response = await fetch(`api/upload`, {
+		const response = await customFetch(`api/upload`, {
 			method: 'POST',
 			body: formData
 		});

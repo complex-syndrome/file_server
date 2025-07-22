@@ -18,6 +18,4 @@ REM To taskill PID that are using PORT:
 REM "netstat -ano | findstr :${PORT}"
 REM "taskkill /PID ${PID} /F"
 
-REM Direct api calls are not affected
-
 endlocal

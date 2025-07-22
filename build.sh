@@ -20,7 +20,7 @@ popd
 echo Backend build completed.
 
 rm -rf frontend/build
-pushd frontend 
+pushd frontend
 bun run build
 popd
 echo Frontend build completed.

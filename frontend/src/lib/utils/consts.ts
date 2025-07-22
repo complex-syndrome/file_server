@@ -1,5 +1,9 @@
 import type { SettingType } from './interfaces';
 
+export const customHeader = {
+	'X-From-Frontend': import.meta.env.VITE_CUSTOM_VALUE || ''
+};
+
 export const SettingDescriptions: SettingType[] = [
 	{
 		title: 'Allow Direct Access of API From Other IPs',
