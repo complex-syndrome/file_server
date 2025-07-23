@@ -15,6 +15,8 @@
 			alt: 'Linkedin'
 		}
 	];
+
+	// Author links to social media
 </script>
 
 <div class="flex gap-2">

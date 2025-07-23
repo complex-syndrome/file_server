@@ -9,6 +9,8 @@
 	import '../app.css';
 
 	let { children } = $props();
+
+	// Layout for every page
 </script>
 
 <div class="app">

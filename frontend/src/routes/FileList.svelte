@@ -73,12 +73,17 @@
 	async function refreshFileList(): Promise<void> {
 		try {
 			allFiles = await apiListFiles();
-		} catch (error) {
+		} catch {
 			toast.error('Could not refresh file list.');
 			allFiles = [];
 		}
 		filteredFiles = filterFilesFuzzy(searchText, allFiles);
 	}
+
+	// Files are listed here
+	// Search bar is also here
+	// Upload button is also here
+	// I should have seperated them
 </script>
 
 <div>

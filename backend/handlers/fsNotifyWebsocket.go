@@ -1,5 +1,7 @@
 package handlers
 
+// Handling websocket connections
+
 import (
 	"log"
 	"net/http"

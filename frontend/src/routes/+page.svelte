@@ -1,5 +1,7 @@
 <script lang="ts">
 	import FileList from './FileList.svelte';
+
+	// Layout for main page: '/'
 </script>
 
 <svelte:head>

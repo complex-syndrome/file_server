@@ -19,10 +19,12 @@
 				success: 'Settings updated.',
 				error: `An error occured while updating settings:`
 			});
-		} catch (error) {
+		} catch {
 			toast.error('Settings update failed');
 		}
 	}
+
+	// Toggle for settings with uses boolean (true / false)
 </script>
 
 <label class="relative inline-flex cursor-pointer items-center">

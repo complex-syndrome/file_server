@@ -1,6 +1,8 @@
 import type { FileInfo } from '$lib/utils/interfaces';
 import { customHeader, tips } from './consts';
 
+// Some tools that can be used even outside this project
+
 // Partial fuzzy
 export function filterFilesFuzzy(text: string, fileArray: FileInfo[]): FileInfo[] {
 	text = text?.trim?.() || '';

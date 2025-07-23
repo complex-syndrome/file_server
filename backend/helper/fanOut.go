@@ -1,5 +1,8 @@
 package helper
 
+// Fanout for sending websocket messages to all connections
+// For updating their file list and settings
+
 import (
 	"sync"
 )

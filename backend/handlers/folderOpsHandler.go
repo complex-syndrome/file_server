@@ -1,5 +1,7 @@
 package handlers
 
+// Handling api calls for folder operations
+
 import (
 	"fmt"
 	"io"

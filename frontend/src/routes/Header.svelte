@@ -6,6 +6,7 @@
 		path: string;
 	}
 
+	// Nav bar (for home and settings)
 	const paths: pathNavElem[] = [
 		{ name: 'Home', path: '/' },
 		{ name: 'Settings', path: '/settings' }

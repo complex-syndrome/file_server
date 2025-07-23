@@ -1,5 +1,8 @@
 import type { SettingType } from './interfaces';
 
+// Some constants
+
+// Secret header between frontend and backend
 export const customHeader = {
 	'X-From-Frontend': import.meta.env.VITE_CUSTOM_VALUE || ''
 };
@@ -7,8 +10,11 @@ export const customHeader = {
 export const SettingDescriptions: SettingType[] = [
 	{
 		title: 'Allow Direct Access of API From Other IPs',
-		description:
-			'Allow other IPs to directly connect to the API without having to go through the web UI. (Not including settings)',
+		description: [
+			`Allow other IPs to directly connect to the API without having to go through the web UI.`,
+			`For api docs please refer to README.md at`,
+			`link:https://github.com/complex-syndrome/file_server/blob/main/README.md`
+		],
 		jsonKey: 'AllowOtherIPs'
 	}
 ];

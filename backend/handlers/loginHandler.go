@@ -1,5 +1,7 @@
 package handlers
 
+// Handling login for WebUI
+
 import (
 	"crypto/sha512"
 	"encoding/json"

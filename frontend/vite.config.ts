@@ -1,9 +1,10 @@
 import tailwindcss from '@tailwindcss/vite';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig, loadEnv } from 'vite';
-import type { HttpProxy, ProxyOptions } from 'vite';
+import type { HttpProxy } from 'vite';
 
-function config(proxy: HttpProxy.Server, _options: ProxyOptions) {
+// Proxy with header to get real ip of request
+function config(proxy: HttpProxy.Server) {
 	proxy.on('proxyReq', (proxyReq, req) => {
 		proxyReq.removeHeader('X-Forwarded-For');
 		proxyReq.setHeader('X-Forwarded-For', req.socket.remoteAddress || '');
@@ -19,6 +20,7 @@ export default defineConfig(({ mode }) => {
 		},
 		plugins: [tailwindcss(), sveltekit()],
 		server: {
+			// Proxy to backend
 			proxy: {
 				'/ws': {
 					target: `ws://localhost:${env.VITE_BACKEND_PORT}`,

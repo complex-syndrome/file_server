@@ -7,12 +7,15 @@
 	import BoolSwitch from './BoolSwitch.svelte';
 	import { loggedIn, storeAfterLogin } from '$lib/stores/session';
 	import { customFetch } from '$lib/utils/tools';
+	import toast from 'svelte-french-toast';
 
 	let currentSettings: Record<string, any> = {};
 
 	let socket: WebSocket;
 	let selfClose: boolean = false;
 	let refreshTimeout: ReturnType<typeof setTimeout> | null = null;
+
+	const linkKeyword = 'link:';
 
 	function setRefreshTimeout(t: ReturnType<typeof setTimeout> | null) {
 		if (refreshTimeout) clearTimeout(refreshTimeout);
@@ -43,15 +46,17 @@
 		}
 	});
 
-	async function refreshSettings(): Promise<any> {
+	async function refreshSettings() {
 		try {
 			const res = await customFetch(`api/settings/list`);
 			currentSettings = await res.json();
-		} catch (error) {
-			console.error(error);
+		} catch {
+			toast.error('Error refreshing settings');
 			currentSettings = {};
 		}
 	}
+
+	// Settings page
 </script>
 
 <svelte:head>
@@ -67,7 +72,20 @@
 				<div class="flex items-center justify-between gap-4 text-left">
 					<div class="flex-grow">
 						<h2 class="text-lg font-bold text-gray-800">{setting.title}</h2>
-						<p class="text-md text-gray-500">{setting.description}</p>
+						{#each setting.description as d}
+							{#if d.startsWith(linkKeyword)}
+								<a
+									href={d.replace(linkKeyword, '').trim()}
+									class="text-sm text-orange-500 hover:underline"
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									{d.replace(linkKeyword, '').trim()}
+								</a>
+							{:else}
+								<p class="text-sm text-gray-500">{d}</p>
+							{/if}
+						{/each}
 					</div>
 					{#if typeof currentSettings[setting.jsonKey] === 'boolean'}
 						<BoolSwitch {setting} json_record={currentSettings} />

@@ -1,5 +1,7 @@
 package helper
 
+// Some tools that can be used even outside this project
+
 import (
 	"crypto/sha512"
 	"encoding/json"
@@ -149,7 +151,8 @@ func ReadSettingsJSON() map[string]any {
 	data, err := os.ReadFile(SettingsPath)
 	if err != nil {
 		log.Printf("Unable to read %s. Generating default settings...\n", SettingsPath)
-		WriteSettings(defaultSettings)
+		CurrentSettings = defaultSettings
+		WriteCurrentSettings()
 	}
 
 	var settings map[string]any
@@ -162,11 +165,11 @@ func ReadSettingsJSON() map[string]any {
 
 var settingsMutex sync.RWMutex
 
-func WriteSettings(newSettings map[string]any) {
+func WriteCurrentSettings() {
 	settingsMutex.Lock()
 	defer settingsMutex.Unlock()
 
-	data, err := json.MarshalIndent(newSettings, "", "  ")
+	data, err := json.MarshalIndent(CurrentSettings, "", "  ")
 	if err != nil {
 		log.Println("Unable to encode new setings into JSON format")
 		return

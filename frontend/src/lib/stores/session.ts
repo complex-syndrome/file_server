@@ -1,6 +1,8 @@
 import { customFetch } from '$lib/utils/tools';
 import { writable } from 'svelte/store';
 
+// Session login
+
 export const loggedIn = writable(false);
 export const storeAfterLogin = 'redirectAfterLogin';
 

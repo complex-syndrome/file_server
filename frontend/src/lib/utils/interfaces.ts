@@ -1,3 +1,5 @@
+// Interfaces
+
 export interface FileInfo {
 	name: string;
 	size: string;
@@ -6,6 +8,6 @@ export interface FileInfo {
 
 export interface SettingType {
 	title: string;
-	description: string;
+	description: string[];
 	jsonKey: string;
 }

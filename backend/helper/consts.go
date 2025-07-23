@@ -1,5 +1,7 @@
 package helper
 
+// Constants 
+
 const (
 	// Root for api
 	ApiPath string = "/api"

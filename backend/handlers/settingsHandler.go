@@ -1,5 +1,7 @@
 package handlers
 
+// Handling settings
+
 import (
 	"encoding/json"
 	"fmt"
@@ -25,7 +27,7 @@ func ListSettingsHandler(w http.ResponseWriter, r *http.Request) {
 	helper.ReplyJSON(w, helper.CurrentSettings)
 }
 
-func EditSettingsHandler(w http.ResponseWriter, r *http.Request) {
+func UpdateSettingsHandler(w http.ResponseWriter, r *http.Request) {
 	if !helper.ValidRequest(r, true) {
 		http.Error(w, "Access Denied: Local Connections Only", http.StatusForbidden)
 		log.Printf("Edit Settings: Failed attempt to access by address: %s\n", r.RemoteAddr)
@@ -57,7 +59,7 @@ func EditSettingsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if updated {
-		helper.WriteSettings(newSettings)
+		helper.WriteCurrentSettings()
 		fmt.Fprintln(w, "Settings successfully updated.")
 		log.Printf("Settings successfully changed by %s.\n", r.RemoteAddr)
 

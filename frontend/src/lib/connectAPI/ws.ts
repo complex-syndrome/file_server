@@ -10,7 +10,7 @@ export function ConnectSocket(
 		refreshFunction();
 	};
 
-	socket.onmessage = (_) => {
+	socket.onmessage = () => {
 		const t = setTimeout(() => {
 			refreshFunction();
 			setTimeoutRef(null);
@@ -19,7 +19,7 @@ export function ConnectSocket(
 		setTimeoutRef(t);
 	};
 
-	socket.onclose = (_) => {
+	socket.onclose = () => {
 		if (!selfCloseRef()) {
 			console.log('Websocket conn disconnected. Attempting to reconnect...');
 			setTimeout(() => {
@@ -36,3 +36,5 @@ export function ConnectSocket(
 	};
 	return socket;
 }
+
+// Websocket connection to backend

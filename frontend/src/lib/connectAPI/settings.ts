@@ -10,3 +10,5 @@ export async function updateSettings(json_rcd: Record<string, any>): Promise<voi
 	});
 	if (!response.ok) throw Error(await response.text());
 }
+
+// Settings api call backend

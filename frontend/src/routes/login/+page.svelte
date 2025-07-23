@@ -38,6 +38,8 @@
 	function toggleShowPassword() {
 		showPassword = !showPassword;
 	}
+
+	// Login page before accessing settings
 </script>
 
 <svelte:head>
@@ -61,6 +63,7 @@
 					type={showPassword ? 'text' : 'password'}
 					bind:value={password}
 					placeholder="Password"
+					autocomplete="new-password"
 					class="w-full flex-grow rounded-xl border border-gray-300 p-4 pr-12 align-middle shadow-md focus:ring-gray-300"
 				/>
 				<button
@@ -88,7 +91,8 @@
 
 		{#if loginAttempted}
 			<p class="mb-4 flex gap-2 text-red-500 {shake ? 'shake' : ''}">
-				<OctagonX />Password incorrect. Please try again.
+				<OctagonX />Password incorrect. Please try again. [If the password is correct, the backend
+				server may be down]
 			</p>
 		{/if}
 

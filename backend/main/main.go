@@ -30,7 +30,7 @@ func main() {
 	http.HandleFunc(helper.DownloadFileURL, handlers.DownloadFileHandler)
 	http.HandleFunc(helper.DeleteFileURL, handlers.DeleteFileHandler)
 	http.HandleFunc(helper.ListSettingsURL, handlers.ListSettingsHandler)
-	http.HandleFunc(helper.UpdateSettingsURL, handlers.EditSettingsHandler)
+	http.HandleFunc(helper.UpdateSettingsURL, handlers.UpdateSettingsHandler)
 
 	// Fsnotify + Websocket
 	fanOut := &helper.FanOut{}
@@ -44,7 +44,7 @@ func main() {
 		func(w http.ResponseWriter, r *http.Request) { handlers.FSChangeWebsocket(fanOut.Subscribe(), w, r) })
 
 	// Log
-	log.Printf("Backend server started at http://%s:%d%s\n", helper.GetMyIP().String(), helper.BackendPort, helper.ApiPath)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", helper.BackendPort), nil))
+	log.Printf("Backend server started at http://%s:%d%s (Served for localhost only)\n", helper.GetMyIP().String(), helper.BackendPort, helper.ApiPath)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf("127.0.0.1:%d", helper.BackendPort), nil))
 	<-make(chan struct{})
 }

@@ -3,6 +3,13 @@ import toast from 'svelte-french-toast';
 import type { FileInfo } from '$lib/utils/interfaces';
 import { customFetch } from '$lib/utils/tools';
 
+// Calls api at backend for folder operations
+// Currently we have:
+// List files
+// Download files
+// Upload files
+// Delete files
+
 export async function apiListFiles(): Promise<FileInfo[]> {
 	const response = await customFetch(`api/list`);
 	if (!response.ok) {
@@ -24,7 +31,7 @@ export async function apiDownloadFile(fileName: string): Promise<void> {
 			error: `An error occured while downloading file: ${fileName}`
 		});
 		downloadViaBrowser(fileName, blob);
-	} catch (error) {
+	} catch {
 		toast.error('Download failed.');
 	}
 }
@@ -34,10 +41,13 @@ export async function apiDeleteFile(fileName: string) {
 		const response = await customFetch(`api/delete?file=${encodeURIComponent(fileName)}`, {
 			method: 'DELETE'
 		});
-		const reply = await response.text();
+		const reply = await toast.promise(response.text(), {
+			loading: `Deleting file: ${fileName}...`,
+			success: `Deleted: ${fileName}`,
+			error: `An error occured while downloading file: ${fileName}`
+		});
 		if (!response.ok) throw Error(reply);
-		toast.success(reply);
-	} catch (error) {
+	} catch {
 		toast.error('Delete failed.');
 	}
 }
@@ -47,15 +57,19 @@ export async function apiUploadFile(file: File): Promise<void> {
 	formData.append('file', file);
 
 	try {
-		const response = await customFetch(`api/upload`, {
-			method: 'POST',
-			body: formData
-		});
-		const reply = await response.text();
-
-		if (!response.ok) throw Error(reply);
-		toast.success(reply);
-	} catch (error) {
+		const response = await toast.promise(
+			customFetch(`api/upload`, {
+				method: 'POST',
+				body: formData
+			}),
+			{
+				loading: `Uploading file: ${file.name}...`,
+				success: `Uploaded: ${file.name}`,
+				error: `An error occured while downloading file: ${file.name}`
+			}
+		);
+		if (!response.ok) throw Error();
+	} catch {
 		toast.error('Upload failed.');
 	}
 }
