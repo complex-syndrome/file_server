@@ -1,3 +1,5 @@
+# File Server
+
 A file server / cloud-like storage webpage created for uploading and downloading files fast, sharing across multiple people and devices locally.
 
 ## Install setup
