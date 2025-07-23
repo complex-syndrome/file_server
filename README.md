@@ -93,9 +93,9 @@ curl "http://localhost:FRONTEND_PORT/api/settings/update" -X POST -d "{\"SETTING
 ![/login on laptop](images/laptop_login.png)
 ![/settings on laptop](images/laptop_settings.png)
 
-![/home on mobile](images/mobile_home.jpg)
-![/login on mobile](images/mobile_login.jpg)
-![/settings on mobile](images/mobile_settings.jpg)
+<img src="images/mobile_home.jpg" alt="/home on mobile" width="33%" />
+<img src="images/mobile_login.jpg" alt="/login on mobile" width="33%" />
+<img src="images/mobile_settings.jpg" alt="/settings on mobile" width="33%" />
 
 ## Code
 ### Tools used
@@ -103,7 +103,7 @@ curl "http://localhost:FRONTEND_PORT/api/settings/update" -X POST -d "{\"SETTING
 - **Svelte** (frontend page): Lightweight, easy to use, a new framework for learning web development and reactivity.
 - **TypeScript** (frontend logic): Type safety that prevents bugs and reduces my pain on handling dynamic types (i love static typing)
 - **TailwindCSS** (CSS framework): Without having to choose hex values of colors are a godsend (I praise to gods for having this)
-- **Bun** (package manager): The main reason is just because it is a new stuff to try, but its undeniably faster than npm
+- **Bun** (package manager): The main reason is just because it is a new stuff to try, but it is also undeniably faster than npm in dev environment
 
 ### Dependencies
 - **svelte-french-toast**: Toast notifications that helped a lot in providing feedback to user
