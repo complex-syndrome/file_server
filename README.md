@@ -26,6 +26,11 @@ For linux / macOS:
 ./start.sh
 ```
 
+### Some notes before running:
+1. Checkout .env file first for:
+- Writing a new password and VITE_CUSTOM_VALUE for it (for security)
+- You could change the UPLOADS_FOLDER value to specify the folder to read and use, remember that removing files is permanent so backup first
+
 ### Using WebUI
 - Upload files
 	1. An upload button that can upload multiple files from explorer
