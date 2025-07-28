@@ -29,7 +29,7 @@ For linux / macOS:
 ### Some notes before running:
 1. Checkout .env file first for:
 - Writing a new password and VITE_CUSTOM_VALUE for it (for security)
-- You could change the UPLOADS_FOLDER value to specify the folder to read and use, remember that removing files is permanent so backup first
+- You could change the UPLOADS_FOLDER value (use absolute path if possible) to specify the folder to read and use, remember that removing files is permanent so backup first
 
 ### Using WebUI
 - Upload files
